@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MHBM Avocats — Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+:root{
+  --navy:#0A2540;--navy-dark:#061828;--navy-mid:#0d3057;
+  --gold:#C5A059;--gold-light:#d4b37a;--gold-bg:rgba(197,160,89,0.08);
+  --charcoal:#333;--chl:#555;--chm:#888;
+  --cream:#FAF8F5;--creamd:#F0EDE8;--white:#fff;
+  --success:#2D7A4F;--sbg:rgba(45,122,79,0.1);
+  --warning:#C5840A;--wbg:rgba(197,132,10,0.1);
+  --danger:#9B2335;--dbg:rgba(155,35,53,0.1);
+  --info:#1a6b9e;--ibg:rgba(26,107,158,0.1);
+  --border:rgba(10,37,64,0.1);--borderg:rgba(197,160,89,0.25);
+  --sw:240px;--th:60px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--charcoal);font-size:14px;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--creamd)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
+/* LOGIN */
+#ls{position:fixed;inset:0;background:var(--navy-dark);display:flex;align-items:center;justify-content:center;z-index:9999;background-image:linear-gradient(rgba(197,160,89,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(197,160,89,0.03) 1px,transparent 1px);background-size:50px 50px}
+.lb{background:var(--navy);border:1px solid var(--borderg);padding:2.5rem;width:100%;max-width:400px;position:relative}
+.lb::before{content:'';position:absolute;top:-8px;right:-8px;width:40px;height:40px;border-top:2px solid var(--gold);border-right:2px solid var(--gold)}
+.lb::after{content:'';position:absolute;bottom:-8px;left:-8px;width:40px;height:40px;border-bottom:2px solid var(--gold);border-left:2px solid var(--gold)}
+.lb-logo{text-align:center;margin-bottom:1.5rem}
+.lb-mark{width:52px;height:52px;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto .65rem;font-family:'Playfair Display',serif;color:var(--gold);font-size:1.3rem}
+.lb-name{color:#fff;font-size:.95rem;font-weight:600}.lb-sub{color:var(--gold);font-size:.6rem;letter-spacing:.1em;margin-top:.2rem}
+.lb label{display:block;font-size:.68rem;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin:.8rem 0 .3rem;font-weight:600}
+.lb input,.lb select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:.68rem .9rem;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;transition:border-color .2s}
+.lb input:focus,.lb select:focus{border-color:var(--gold)}.lb select option{background:var(--navy)}
+.lb-btn{width:100%;background:var(--gold);color:var(--navy);border:none;padding:.82rem;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:1.1rem;transition:all .2s;letter-spacing:.05em}
+.lb-btn:hover{background:var(--gold-light)}
+/* LAYOUT */
+#app{display:none}
+.layout{display:flex;min-height:100vh}
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--navy-dark);border-right:1px solid var(--borderg);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100;overflow-y:auto;transition:transform .3s}
+.sb-hd{padding:1rem 1.15rem .85rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sb-logo{display:flex;align-items:center;gap:.65rem;cursor:pointer}
+.sb-mk{width:33px;height:33px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;color:var(--gold);font-size:.88rem;flex-shrink:0}
+.sb-nm{color:#fff;font-size:.76rem;font-weight:700;line-height:1.25}.sb-sb{color:var(--gold);font-size:.56rem;letter-spacing:.06em}
+.sb-usr{padding:.75rem 1.15rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:.55rem}
+.uav{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--navy);flex-shrink:0}
+.unm{color:#fff;font-size:.71rem;font-weight:600}.url{color:rgba(255,255,255,0.4);font-size:.58rem}
+.sb-nav{flex:1;padding:.55rem 0}
+.ns{padding:.42rem 1.15rem .18rem;font-size:.55rem;color:rgba(255,255,255,0.25);letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.ni{display:flex;align-items:center;gap:.65rem;padding:.52rem 1.15rem;cursor:pointer;transition:all .15s;border-right:2px solid transparent}
+.ni:hover{background:rgba(255,255,255,0.04)}.ni.active{background:rgba(197,160,89,0.1);border-right-color:var(--gold)}
+.ni.active .nil,.ni.active .nic{color:var(--gold)}
+.nic{font-size:.88rem;width:17px;text-align:center;flex-shrink:0;color:rgba(255,255,255,0.36);transition:color .15s}
+.nil{font-size:.71rem;color:rgba(255,255,255,0.56);font-weight:500;transition:color .15s;flex:1}
+.nbg{background:var(--danger);color:#fff;font-size:.52rem;padding:.1rem .35rem;border-radius:8px;font-weight:700;margin-left:auto}
+.sb-ft{padding:.85rem 1.15rem;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-out{display:flex;align-items:center;gap:.55rem;cursor:pointer;color:rgba(255,255,255,0.36);font-size:.68rem;transition:color .2s}.sb-out:hover{color:var(--danger)}
+/* TOPBAR */
+.tb{height:var(--th);background:#fff;border-bottom:1px solid var(--border);position:fixed;top:0;left:var(--sw);right:0;z-index:99;display:flex;align-items:center;padding:0 1.35rem;gap:.9rem;box-shadow:0 1px 4px rgba(10,37,64,0.07)}
+.tb-ti{font-size:.86rem;font-weight:700;color:var(--navy);flex:1}
+.tb-ti span{color:var(--chm);font-size:.66rem;font-weight:400;display:block;margin-top:.1rem}
+.sb-bx{display:flex;align-items:center;gap:.42rem;background:var(--cream);border:1px solid var(--border);padding:.35rem .75rem;flex:1;max-width:270px;position:relative}
+.sb-bx input{background:none;border:none;outline:none;font-size:.73rem;color:var(--charcoal);width:100%;font-family:'Inter',sans-serif}
+.sb-bx input::placeholder{color:var(--chm)}
+.tb-acts{display:flex;align-items:center;gap:.6rem}
+.tb-btn{width:31px;height:31px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .2s;color:var(--chl);font-size:.82rem}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold)}
+.nc{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:.5rem;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.tb-pf{display:flex;align-items:center;gap:.42rem;cursor:pointer}
+.tb-av{width:29px;height:29px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--navy)}
+.tb-pn{font-size:.7rem;font-weight:600;color:var(--navy)}
+.hb{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:3px}.hb span{width:19px;height:1.5px;background:var(--charcoal)}
+/* MAIN */
+.main{margin-left:var(--sw);margin-top:var(--th);padding:1.35rem;min-height:calc(100vh - var(--th));background:var(--cream)}
+/* VIEWS */
+.view{display:none}.view.active{display:block}
+/* NOTIF */
+.np{position:fixed;top:var(--th);right:0;width:305px;background:#fff;border-left:1px solid var(--border);border-bottom:1px solid var(--border);box-shadow:0 8px 32px rgba(10,37,64,0.16);z-index:200;display:none;max-height:calc(100vh - var(--th));overflow-y:auto}
+.np.open{display:block}
+.np-hd{padding:.85rem 1.05rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.np-t{font-size:.76rem;font-weight:700;color:var(--navy)}.np-cl{font-size:.63rem;color:var(--gold);cursor:pointer}
+.np-it{padding:.7rem 1.05rem;border-bottom:1px solid var(--border);display:flex;gap:.6rem;cursor:pointer;transition:background .15s}
+.np-it:hover{background:var(--cream)}.np-it.u{background:rgba(197,160,89,0.04)}
+.np-dt{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:.28rem}
+.np-tx{font-size:.68rem;color:var(--charcoal);line-height:1.5}.np-tm{font-size:.6rem;color:var(--chm);margin-top:.15rem}
+/* SEARCH */
+.sr{background:#fff;border:1px solid var(--border);position:absolute;top:100%;left:0;right:0;z-index:300;max-height:270px;overflow-y:auto;box-shadow:0 8px 32px rgba(10,37,64,0.16)}
+.sr-it{padding:.52rem .85rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s}.sr-it:hover{background:var(--cream)}
+.sr-t{font-size:.71rem;font-weight:600;color:var(--navy)}.sr-s{font-size:.61rem;color:var(--chm)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:.35rem;padding:.48rem .95rem;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:600;transition:all .2s;white-space:nowrap}
+.bp{background:var(--navy);color:#fff}.bp:hover{background:var(--navy-mid)}
+.bg2{background:var(--gold);color:var(--navy)}.bg2:hover{background:var(--gold-light)}
+.bo{background:transparent;color:var(--navy);border:1px solid var(--border)}.bo:hover{border-color:var(--gold);color:var(--gold)}
+.bd2{background:var(--danger);color:#fff}.bd2:hover{opacity:.9}
+.bs2{background:var(--success);color:#fff}.bs2:hover{opacity:.9}
+.bsm{padding:.3rem .62rem;font-size:.66rem}
+.bic{width:29px;height:29px;padding:0;justify-content:center;border:1px solid var(--border);background:#fff;color:var(--chl);cursor:pointer;transition:all .2s;font-size:.76rem}
+.bic:hover{border-color:var(--gold);color:var(--gold)}
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);padding:1.15rem;box-shadow:0 1px 4px rgba(10,37,64,0.07)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;padding-bottom:.65rem;border-bottom:1px solid var(--border)}
+.ct{font-size:.78rem;font-weight:700;color:var(--navy)}.cst{font-size:.63rem;color:var(--chm);margin-top:.1rem}
+/* GRID */
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+/* KPI */
+.kpi{background:#fff;border:1px solid var(--border);padding:1.05rem;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(10,37,64,0.07)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kn::before{background:var(--navy)}.kg::before{background:var(--gold)}
+.ks::before{background:var(--success)}.kd::before{background:var(--danger)}.ki::before{background:var(--info)}
+.kl{font-size:.62rem;color:var(--chm);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.42rem}
+.kv{font-family:'Playfair Display',serif;font-size:1.85rem;color:var(--navy);font-weight:700;line-height:1}
+.ksb{font-size:.62rem;color:var(--chm);margin-top:.28rem}
+.kic{position:absolute;top:.85rem;right:.85rem;font-size:1.35rem;opacity:.11}
+.ktr{font-size:.61rem;margin-top:.32rem;display:flex;align-items:center;gap:.2rem;font-weight:600}
+.tup{color:var(--success)}.tdn{color:var(--danger)}
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;padding:.17rem .52rem;font-size:.61rem;font-weight:600;letter-spacing:.03em}
+.bds{background:var(--sbg);color:var(--success)}.bdw{background:var(--wbg);color:var(--warning)}
+.bdd{background:var(--dbg);color:var(--danger)}.bdi{background:var(--ibg);color:var(--info)}
+.bdn{background:rgba(10,37,64,0.08);color:var(--navy)}.bdg2{background:var(--gold-bg);color:#8a6a2a}
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:var(--cream);padding:.52rem .75rem;text-align:left;font-size:.6rem;font-weight:700;color:var(--chm);text-transform:uppercase;letter-spacing:.07em;border-bottom:2px solid var(--border);white-space:nowrap}
+td{padding:.62rem .75rem;border-bottom:1px solid var(--border);font-size:.73rem;color:var(--charcoal);vertical-align:middle}
+tr:hover td{background:rgba(197,160,89,0.025)}tr:last-child td{border-bottom:none}
+.tbb{font-weight:600;color:var(--navy)}.tbm{color:var(--chm);font-size:.66rem}
+/* FORM */
+.fg{margin-bottom:.85rem}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem}
+.fst{font-size:.68rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.85rem;padding-bottom:.42rem;border-bottom:1px solid var(--border)}
+label{display:block;font-size:.66rem;font-weight:600;color:var(--charcoal);margin-bottom:.26rem;letter-spacing:.02em}
+input[type=text],input[type=email],input[type=tel],input[type=date],input[type=number],input[type=password],select,textarea{width:100%;border:1px solid var(--border);background:#fff;padding:.55rem .78rem;font-family:'Inter',sans-serif;font-size:.74rem;color:var(--charcoal);outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(197,160,89,0.08)}
+textarea{resize:vertical;min-height:78px}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .68rem center}
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1.05rem}
+.tab{padding:.52rem .95rem;cursor:pointer;font-size:.7rem;font-weight:600;color:var(--chm);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap}
+.tab:hover{color:var(--navy)}.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+/* FILTERS */
+.fb{display:flex;gap:.52rem;margin-bottom:.85rem;flex-wrap:wrap;align-items:center}
+.fs2{display:flex;align-items:center;gap:.36rem;background:#fff;border:1px solid var(--border);padding:.35rem .68rem;flex:1;max-width:240px}
+.fs2 input{border:none;outline:none;font-size:.7rem;font-family:'Inter',sans-serif;width:100%;background:none}
+.fsl{padding:.35rem .62rem;border:1px solid var(--border);background:#fff;font-size:.68rem;font-family:'Inter',sans-serif;color:var(--charcoal);cursor:pointer;outline:none}
+.fsl:focus{border-color:var(--gold)}
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(6,24,40,0.72);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+.mo.open{display:flex}
+.md{background:#fff;width:100%;max-width:610px;max-height:90vh;overflow-y:auto}
+.md-h{padding:1.05rem 1.35rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--navy);color:#fff;position:sticky;top:0;z-index:1}
+.md-t{font-size:.85rem;font-weight:700}
+.md-x{background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:1.2rem;line-height:1}
+.md-b{padding:1.35rem}
+.md-f{padding:.85rem 1.35rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.52rem;background:var(--cream)}
+/* KANBAN */
+.kan{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.kc{background:var(--creamd);padding:.68rem;border:1px solid var(--border)}
+.kc-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.kc-t{font-size:.65rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em}
+.kc-n{background:var(--navy);color:#fff;font-size:.56rem;padding:.08rem .35rem;border-radius:8px;font-weight:700}
+.kk{background:#fff;border:1px solid var(--border);padding:.72rem;margin-bottom:.48rem;cursor:pointer;transition:all .2s;border-left:3px solid var(--gold)}
+.kk:hover{box-shadow:0 4px 16px rgba(10,37,64,0.12);transform:translateY(-1px)}
+.kk-t{font-size:.7rem;font-weight:600;color:var(--navy);margin-bottom:.22rem}.kk-s{font-size:.63rem;color:var(--chm)}
+/* CALENDAR */
+.cal-hd{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border)}
+.cal-dn{background:var(--cream);padding:.42rem;text-align:center;font-size:.6rem;font-weight:700;color:var(--chm);text-transform:uppercase}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border)}
+.cal-c{background:#fff;min-height:70px;padding:.28rem;cursor:pointer;transition:background .15s}.cal-c:hover{background:var(--cream)}
+.cal-c.om{background:var(--creamd)}.cal-c.tdy{background:rgba(197,160,89,0.08);outline:1.5px solid var(--gold)}
+.cal-n{font-size:.68rem;font-weight:600;color:var(--navy);margin-bottom:.18rem}
+.cal-e{font-size:.56rem;background:var(--navy);color:#fff;padding:.06rem .22rem;margin-bottom:.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-e.au{background:var(--danger)}.cal-e.vi{background:var(--gold);color:var(--navy)}.cal-e.re{background:var(--success)}
+/* PROGRESS */
+.pb{background:var(--border);height:5px;overflow:hidden}
+.pf{height:100%;background:var(--gold);transition:width .5s}
+/* STAT ROW */
+.sr2{display:flex;gap:.85rem;flex-wrap:wrap}
+.sm2{flex:1;min-width:85px;text-align:center;padding:.72rem;background:var(--cream);border:1px solid var(--border)}
+.sm2-v{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy);font-weight:700}
+.sm2-l{font-size:.6rem;color:var(--chm);margin-top:.15rem}
+/* CMS */
+.cms-f{border:1px solid var(--border);padding:.68rem;margin-bottom:.6rem;background:#fff}
+.cms-l{font-size:.58rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.32rem}
+.cms-f input,.cms-f textarea{border:1px dashed var(--borderg);background:rgba(197,160,89,0.03);font-size:.78rem}
+.cms-f input:focus,.cms-f textarea:focus{border-color:var(--gold);background:#fff}
+/* ALERT */
+.al{padding:.68rem .88rem;font-size:.7rem;display:flex;gap:.42rem;align-items:flex-start;margin-bottom:.85rem;line-height:1.5}
+.ali{background:var(--ibg);border-left:3px solid var(--info);color:var(--info)}
+.alw{background:var(--wbg);border-left:3px solid var(--warning);color:var(--warning)}
+.als{background:var(--sbg);border-left:3px solid var(--success);color:var(--success)}
+/* PERM */
+.pmt{width:100%;border-collapse:collapse}
+.pmt th,.pmt td{padding:.42rem .52rem;border:1px solid var(--border);text-align:center;font-size:.64rem}
+.pmt th{background:var(--cream);font-weight:700;color:var(--navy)}
+.pmt td:first-child{text-align:left;font-weight:600}
+.pck{color:var(--success)}.pcx{color:var(--danger)}
+/* DROPZONE */
+.dz{border:2px dashed var(--borderg);padding:1.65rem;text-align:center;cursor:pointer;transition:all .2s;background:rgba(197,160,89,0.02)}
+.dz:hover{border-color:var(--gold);background:var(--gold-bg)}
+/* TOAST */
+.tc{position:fixed;bottom:1.35rem;right:1.35rem;z-index:9999;display:flex;flex-direction:column;gap:.42rem}
+.toast{background:var(--navy);color:#fff;padding:.75rem 1.05rem;border-left:3px solid var(--gold);font-size:.73rem;box-shadow:0 8px 32px rgba(10,37,64,0.16);animation:si .3s ease;max-width:285px;display:flex;align-items:center;gap:.52rem}
+@keyframes si{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.ts{border-left-color:var(--success)}.toast.td{border-left-color:var(--danger)}
+/* RESPONSIVE */
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr)}.kan{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}
+  .tb{left:0}.main{margin-left:0}.hb{display:flex}
+  .g2,.g3,.g4{grid-template-columns:1fr}.kan{grid-template-columns:1fr}
+  .fr,.fr3{grid-template-columns:1fr}.sb-bx{max-width:140px}
+}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div id="ls">
+  <div class="lb">
+    <div class="lb-logo">
+      <div class="lb-mark">M</div>
+      <div class="lb-name">MHBM Avocats-Conseils</div>
+      <div class="lb-sub">CABINET JURIDIQUE — TUNISIE</div>
+    </div>
+    <label>Adresse e-mail</label>
+    <input type="email" value="admin@mhbm-avocats.tn">
+    <label>Mot de passe</label>
+    <input type="password" value="••••••••">
+    <label>Profil de démonstration</label>
+    <select id="lr">
+      <option value="admin">Administrateur Principal — Maître Ben Makhlouf</option>
+      <option value="avocat">Avocat — Me. Sonia Trabelsi</option>
+      <option value="assistant">Assistant Juridique — K. Ben Salah</option>
+      <option value="secretariat">Secrétariat — F. Mejri</option>
+      <option value="comptable">Comptabilité — H. Baccouche</option>
+    </select>
+    <button class="lb-btn" onclick="doLogin()">SE CONNECTER AU DASHBOARD</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sb" id="sidebar">
+  <div class="sb-hd">
+    <div class="sb-logo" onclick="sv('dashboard')">
+      <div class="sb-mk">M</div>
+      <div><div class="sb-nm">MHBM Avocats</div><div class="sb-sb">LEGAL PLATFORM v2026</div></div>
+    </div>
+  </div>
+  <div class="sb-usr">
+    <div class="uav" id="sbAv">MB</div>
+    <div><div class="unm" id="sbNm">Maître Ben Makhlouf</div><div class="url" id="sbRl">Administrateur Principal</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="ns">Principal</div>
+    <div class="ni active" onclick="sv('dashboard')" data-v="dashboard"><span class="nic">⬛</span><span class="nil">Tableau de Bord</span></div>
+    <div class="ns">Gestion</div>
+    <div class="ni" onclick="sv('dossiers')" data-v="dossiers"><span class="nic">📁</span><span class="nil">Dossiers Juridiques</span><span class="nbg">18</span></div>
+    <div class="ni" onclick="sv('clients')" data-v="clients"><span class="nic">👥</span><span class="nil">Clients</span></div>
+    <div class="ni" onclick="sv('consultations')" data-v="consultations"><span class="nic">💬</span><span class="nil">Consultations</span><span class="nbg">3</span></div>
+    <div class="ni" onclick="sv('agenda')" data-v="agenda"><span class="nic">📅</span><span class="nil">Agenda</span></div>
+    <div class="ns">Cabinet</div>
+    <div class="ni" onclick="sv('equipe')" data-v="equipe"><span class="nic">🏛</span><span class="nil">Équipe</span></div>
+    <div class="ni" onclick="sv('facturation')" data-v="facturation"><span class="nic">💰</span><span class="nil">Facturation</span></div>
+    <div class="ni" onclick="sv('documents')" data-v="documents"><span class="nic">📄</span><span class="nil">Documents</span></div>
+    <div class="ni" onclick="sv('demandes')" data-v="demandes"><span class="nic">📥</span><span class="nil">Demandes Reçues</span><span class="nbg">5</span></div>
+    <div class="ns">Site & Communication</div>
+    <div class="ni" onclick="sv('cms')" data-v="cms"><span class="nic">🌐</span><span class="nil">Gestion du Site</span></div>
+    <div class="ni" onclick="sv('blog')" data-v="blog"><span class="nic">✍️</span><span class="nil">Blog & Articles</span></div>
+    <div class="ni" onclick="sv('seo')" data-v="seo"><span class="nic">📊</span><span class="nil">SEO Center</span></div>
+    <div class="ns">Système</div>
+    <div class="ni" onclick="sv('espace')" data-v="espace"><span class="nic">👤</span><span class="nil">Espace Client</span></div>
+    <div class="ni" onclick="sv('analytics')" data-v="analytics"><span class="nic">📈</span><span class="nil">Analytics</span></div>
+    <div class="ni" onclick="sv('securite')" data-v="securite"><span class="nic">🔒</span><span class="nil">Sécurité</span></div>
+  </nav>
+  <div class="sb-ft"><div class="sb-out" onclick="doLogout()"><span>⤴</span><span>Déconnexion</span></div></div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="tb">
+  <div class="hb" onclick="toggleSb()"><span></span><span></span><span></span></div>
+  <div class="tb-ti" id="tbTi">Tableau de Bord<span id="tbSb">Vue globale · 20 juin 2026</span></div>
+  <div class="sb-bx">
+    <span style="color:var(--chm);font-size:.78rem">🔍</span>
+    <input type="text" placeholder="Recherche globale..." id="gs" oninput="doSearch(this.value)" onblur="setTimeout(()=>closeSr(),180)">
+    <div class="sr" id="srBox" style="display:none"></div>
+  </div>
+  <div class="tb-acts">
+    <div class="tb-btn" onclick="toggleNp()">🔔<div class="nc" id="nc">5</div></div>
+    <div class="tb-btn" onclick="showT('Aide — Documentation complète','info')">?</div>
+    <div class="tb-pf"><div class="tb-av" id="tbAv">MB</div><div class="tb-pn" id="tbNm">M. Ben Makhlouf</div></div>
+  </div>
+</header>
+
+<!-- NOTIF PANEL -->
+<div class="np" id="np">
+  <div class="np-hd"><div class="np-t">Notifications</div><div class="np-cl" onclick="clearNp()">Tout marquer lu</div></div>
+  <div id="npList"></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="view active" id="view-dashboard">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.35rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Tableau de Bord</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Vue consolidée du cabinet — Maître Ben Makhlouf</div></div>
+    <div style="display:flex;gap:.52rem"><button class="btn bo bsm" onclick="sv('agenda')">📅 Agenda</button><button class="btn bg2 bsm" onclick="om('ndoss')">+ Nouveau Dossier</button></div>
+  </div>
+  <div class="g4" style="margin-bottom:1rem">
+    <div class="kpi kn"><div class="kic">📁</div><div class="kl">Dossiers Actifs</div><div class="kv" id="kD">0</div><div class="ktr tup">↑ +3 ce mois</div></div>
+    <div class="kpi kg"><div class="kic">👥</div><div class="kl">Clients Total</div><div class="kv" id="kC">0</div><div class="ktr tup">↑ +2 ce mois</div></div>
+    <div class="kpi ks"><div class="kic">💰</div><div class="kl">Revenus (juin)</div><div class="kv" id="kR">0</div><div class="ksb">TND</div><div class="ktr tup">↑ +12%</div></div>
+    <div class="kpi kd"><div class="kic">⚖️</div><div class="kl">Audiences — Semaine</div><div class="kv" id="kA">0</div><div class="ksb">Cette semaine</div></div>
+  </div>
+  <div class="g2" style="margin-bottom:1rem">
+    <div class="card"><div class="ch"><div><div class="ct">Revenus Mensuels (TND)</div><div class="cst">Exercice 2026</div></div></div><canvas id="cRev" height="175"></canvas></div>
+    <div class="card"><div class="ch"><div class="ct">Dossiers par Domaine</div></div><canvas id="cDom" height="175"></canvas></div>
+  </div>
+  <div class="g3" style="margin-bottom:1rem">
+    <div class="card"><div class="ch"><div class="ct">Agenda — Aujourd'hui</div><button class="btn bo bsm" onclick="sv('agenda')">Voir tout</button></div><div id="agTd"></div></div>
+    <div class="card"><div class="ch"><div class="ct">Dossiers Urgents</div><span class="bdg bdd">3 urgents</span></div><div id="urgD"></div></div>
+    <div class="card"><div class="ch"><div class="ct">Dernières Demandes</div><span class="bdg bdn">5 nouvelles</span></div><div id="recM"></div></div>
+  </div>
+  <div class="card"><div class="ch"><div class="ct">Activité Récente</div><button class="btn bo bsm" onclick="sv('securite')">Journal complet</button></div><div id="actLog"></div></div>
+</div>
+
+<!-- DOSSIERS -->
+<div class="view" id="view-dossiers">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Dossiers Juridiques</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">18 dossiers actifs</div></div>
+    <div style="display:flex;gap:.52rem"><button class="btn bo bsm">⬇ Export CSV</button><button class="btn bg2 bsm" onclick="om('ndoss')">+ Nouveau Dossier</button></div>
+  </div>
+  <div class="sr2" style="margin-bottom:1rem">
+    <div class="sm2"><div class="sm2-v">18</div><div class="sm2-l">Total</div></div>
+    <div class="sm2"><div class="sm2-v" style="color:var(--info)">11</div><div class="sm2-l">En cours</div></div>
+    <div class="sm2"><div class="sm2-v" style="color:var(--warning)">4</div><div class="sm2-l">Audience</div></div>
+    <div class="sm2"><div class="sm2-v" style="color:var(--danger)">2</div><div class="sm2-l">Urgents</div></div>
+    <div class="sm2"><div class="sm2-v" style="color:var(--success)">1</div><div class="sm2-l">Clôturés</div></div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="fb" style="margin-bottom:0">
+      <div class="fs2"><span style="color:var(--chm)">🔍</span><input type="text" placeholder="Rechercher..." oninput="filtD(this.value)"></div>
+      <select class="fsl" onchange="filtDS(this.value)"><option value="">Tous statuts</option><option>En cours</option><option>Audience</option><option>Suspendu</option><option>Clôturé</option></select>
+      <select class="fsl"><option value="">Tous types</option><option>Pénal</option><option>Civil</option><option>Commercial</option><option>Famille</option><option>Administratif</option></select>
+    </div>
+  </div>
+  <div class="card"><div class="tw"><table><thead><tr><th>Référence</th><th>Intitulé</th><th>Client</th><th>Type</th><th>Statut</th><th>Avocat</th><th>Échéance</th><th>Priorité</th><th>Actions</th></tr></thead><tbody id="dossB"></tbody></table></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:.85rem;border-top:1px solid var(--border);margin-top:.45rem">
+      <div style="font-size:.66rem;color:var(--chm)">18 résultats</div>
+      <div style="display:flex;gap:.28rem"><button class="btn bsm bo">‹</button><button class="btn bsm bp">1</button><button class="btn bsm bo">›</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENTS -->
+<div class="view" id="view-clients">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Base de Données Clients</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">12 clients · 8 Tunisie · 4 Étranger</div></div>
+    <div style="display:flex;gap:.52rem"><button class="btn bo bsm">⬇ Exporter</button><button class="btn bg2 bsm" onclick="om('ncl')">+ Nouveau Client</button></div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="stab(this,'tc-all')">Tous (12)</div>
+    <div class="tab" onclick="stab(this,'tc-tn')">Tunisie (8)</div>
+    <div class="tab" onclick="stab(this,'tc-etr')">Étranger (4)</div>
+    <div class="tab" onclick="stab(this,'tc-vip')">VIP (3)</div>
+  </div>
+  <div id="tc-all"><div class="fb"><div class="fs2"><span style="color:var(--chm)">🔍</span><input type="text" placeholder="Nom, email, tél..."></div></div><div class="g3" id="cGrid"></div></div>
+  <div id="tc-tn" style="display:none"><div class="g3" id="cGridTn"></div></div>
+  <div id="tc-etr" style="display:none"><div class="g3" id="cGridEtr"></div></div>
+  <div id="tc-vip" style="display:none"><div class="g3" id="cGridVip"></div></div>
+</div>
+
+<!-- CONSULTATIONS -->
+<div class="view" id="view-consultations">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Consultations</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Vue Kanban — 8 consultations</div></div>
+    <button class="btn bg2 bsm" onclick="om('ncon')">+ Nouvelle Consultation</button>
+  </div>
+  <div class="kan" id="kanB"></div>
+  <div class="g3" style="margin-top:1.2rem">
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Par Type</div><canvas id="cCon" height="155"></canvas></div>
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Taux de Conversion</div>
+      <div style="text-align:center;padding:.75rem 0"><div style="font-family:'Playfair Display',serif;font-size:2.65rem;color:var(--gold);font-weight:700">72%</div><div style="font-size:.7rem;color:var(--chm);margin-bottom:.7rem">Consultation → Dossier ouvert</div><div class="pb"><div class="pf" style="width:72%"></div></div></div>
+    </div>
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Délai Moyen de Réponse</div>
+      <div style="text-align:center;padding:1.1rem 0"><div style="font-family:'Playfair Display',serif;font-size:2.65rem;color:var(--navy);font-weight:700">24h</div><div style="font-size:.7rem;color:var(--chm)">Délai moyen constaté</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENDA -->
+<div class="view" id="view-agenda">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Agenda du Cabinet</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Juin 2026</div></div>
+    <div style="display:flex;gap:.52rem"><div style="display:flex;gap:.28rem"><button class="btn bsm bo">Mois</button><button class="btn bsm bo">Semaine</button><button class="btn bsm bo">Jour</button></div><button class="btn bg2 bsm" onclick="om('nev')">+ Événement</button></div>
+  </div>
+  <div style="display:flex;gap:.9rem;margin-bottom:.85rem;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:.35rem;font-size:.66rem"><span style="width:10px;height:10px;background:var(--navy);display:inline-block"></span>RDV Client</div>
+    <div style="display:flex;align-items:center;gap:.35rem;font-size:.66rem"><span style="width:10px;height:10px;background:var(--danger);display:inline-block"></span>Audience</div>
+    <div style="display:flex;align-items:center;gap:.35rem;font-size:.66rem"><span style="width:10px;height:10px;background:var(--gold);display:inline-block"></span>Vidéo</div>
+    <div style="display:flex;align-items:center;gap:.35rem;font-size:.66rem"><span style="width:10px;height:10px;background:var(--success);display:inline-block"></span>Réunion</div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem"><button class="btn bsm bo">‹ Mai</button><div style="font-weight:700;color:var(--navy)">Juin 2026</div><button class="btn bsm bo">Juillet ›</button></div>
+    <div class="cal-hd"><div class="cal-dn">Lun</div><div class="cal-dn">Mar</div><div class="cal-dn">Mer</div><div class="cal-dn">Jeu</div><div class="cal-dn">Ven</div><div class="cal-dn">Sam</div><div class="cal-dn">Dim</div></div>
+    <div class="cal-g" id="calG"></div>
+  </div>
+  <div class="card" style="margin-top:1rem"><div class="ch"><div class="ct">Prochains Événements</div></div><div id="upEv"></div></div>
+</div>
+
+<!-- EQUIPE -->
+<div class="view" id="view-equipe">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Gestion de l'Équipe</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">6 membres · Rôles et permissions</div></div>
+    <button class="btn bg2 bsm" onclick="om('nmb')">+ Ajouter Membre</button>
+  </div>
+  <div class="g3" id="eqG" style="margin-bottom:1.35rem"></div>
+  <div class="card"><div class="ch"><div class="ct">Matrice des Permissions</div></div><div class="tw"><table class="pmt"><thead><tr><th>Module</th><th>Admin</th><th>Avocat</th><th>Assistant</th><th>Secrétariat</th><th>Comptabilité</th></tr></thead><tbody id="pmB"></tbody></table></div></div>
+</div>
+
+<!-- FACTURATION -->
+<div class="view" id="view-facturation">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Facturation & Honoraires</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Gestion des paiements</div></div>
+    <div style="display:flex;gap:.52rem"><button class="btn bo bsm">⬇ Rapport PDF</button><button class="btn bg2 bsm" onclick="om('nfac')">+ Nouvelle Facture</button></div>
+  </div>
+  <div class="g4" style="margin-bottom:1rem">
+    <div class="kpi ks"><div class="kl">Encaissé (juin)</div><div class="kv" style="font-size:1.5rem">14 200</div><div class="ksb">TND</div></div>
+    <div class="kpi" style="border-top:3px solid var(--warning)"><div class="kl">En attente</div><div class="kv" style="font-size:1.5rem">6 500</div><div class="ksb">TND · 4 factures</div></div>
+    <div class="kpi kd"><div class="kl">En retard</div><div class="kv" style="font-size:1.5rem">2 100</div><div class="ksb">TND · 2 factures</div></div>
+    <div class="kpi kn"><div class="kl">Total YTD 2026</div><div class="kv" style="font-size:1.5rem">68 400</div><div class="ksb">TND</div></div>
+  </div>
+  <div class="tabs"><div class="tab active">Factures</div><div class="tab">Devis</div><div class="tab">Recouvrement</div><div class="tab">Historique</div></div>
+  <div class="card">
+    <div class="fb"><div class="fs2"><span style="color:var(--chm)">🔍</span><input type="text" placeholder="N° facture, client..."></div><select class="fsl"><option>Tous statuts</option><option>Brouillon</option><option>Émise</option><option>Payée</option><option>En retard</option></select></div>
+    <div class="tw"><table><thead><tr><th>N° Facture</th><th>Client</th><th>Dossier</th><th>Montant</th><th>Émise</th><th>Échéance</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="facB"></tbody></table></div>
+  </div>
+</div>
+
+<!-- DOCUMENTS -->
+<div class="view" id="view-documents">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Bibliothèque Documentaire</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Classement · Versioning · Téléchargement</div></div>
+    <button class="btn bg2 bsm" onclick="om('udoc')">⬆ Importer</button>
+  </div>
+  <div class="g2" style="margin-bottom:1rem">
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Arborescence</div><div id="docTr"></div></div>
+    <div class="card"><div class="ch"><div class="ct">Documents Récents</div></div><div id="docLi"></div></div>
+  </div>
+  <div class="card"><div class="dz" onclick="showT('Upload disponible en production','info')"><div style="font-size:1.8rem;margin-bottom:.42rem">📎</div><div style="font-size:.73rem;color:var(--chm)">Glissez-déposez vos fichiers ici ou cliquez pour parcourir</div><div style="font-size:.63rem;color:var(--chm);margin-top:.28rem">PDF, DOCX, XLSX — Max 50 Mo</div></div></div>
+</div>
+
+<!-- DEMANDES -->
+<div class="view" id="view-demandes">
+  <div style="margin-bottom:1.2rem"><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Demandes Reçues</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Centre de gestion des leads — Site public</div></div>
+  <div class="g4" style="margin-bottom:1rem">
+    <div class="kpi kd"><div class="kl">Nouvelles</div><div class="kv">5</div></div>
+    <div class="kpi" style="border-top:3px solid var(--warning)"><div class="kl">En traitement</div><div class="kv">3</div></div>
+    <div class="kpi ks"><div class="kl">Clôturées</div><div class="kv">28</div></div>
+    <div class="kpi kn"><div class="kl">Ce mois</div><div class="kv">36</div></div>
+  </div>
+  <div class="tabs"><div class="tab active">Contact (5) 🔴</div><div class="tab">Consultations (3)</div><div class="tab">Devis (1)</div><div class="tab">Newsletter (2)</div></div>
+  <div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Nom</th><th>Contact</th><th>Type Affaire</th><th>Message</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="demB"></tbody></table></div></div>
+</div>
+
+<!-- CMS -->
+<div class="view" id="view-cms">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Gestion du Site Web</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Modifier le contenu sans toucher au code</div></div>
+    <div style="display:flex;gap:.52rem"><button class="btn bo bsm" onclick="showT('Prévisualisation ouverte','info')">👁 Prévisualiser</button><button class="btn bg2 bsm" onclick="showT('Modifications publiées sur le site !','ts')">🚀 Publier</button></div>
+  </div>
+  <div class="al ali">ℹ️ <strong>Mode édition actif :</strong> Modifiez les champs et cliquez sur "Publier" pour mettre à jour le site public.</div>
+  <div class="tabs">
+    <div class="tab active" onclick="cmsT(this,'cms-ho')">Accueil</div>
+    <div class="tab" onclick="cmsT(this,'cms-pr')">Profil</div>
+    <div class="tab" onclick="cmsT(this,'cms-ex')">Expertises</div>
+    <div class="tab" onclick="cmsT(this,'cms-co')">Contact</div>
+    <div class="tab" onclick="cmsT(this,'cms-fq')">FAQ</div>
+    <div class="tab" onclick="cmsT(this,'cms-tm')">Équipe</div>
+  </div>
+  <div id="cms-ho" class="css">
+    <div class="g2">
+      <div class="card"><div class="ct" style="margin-bottom:.85rem">Section Hero</div>
+        <div class="cms-f"><div class="cms-l">Titre (H1)</div><input type="text" value="الأستاذ محمد هيثم بن مخلوف"></div>
+        <div class="cms-f"><div class="cms-l">Sous-Titre</div><input type="text" value="خبرة عريقة في الدفاع عن الحقوق، والتزام راسخ بالعدالة"></div>
+        <div class="cms-f"><div class="cms-l">Texte de Présentation</div><textarea>أكثر من 19 عاماً من الممارسة القانونية...</textarea></div>
+        <div class="cms-f"><div class="cms-l">CTA Principal</div><input type="text" value="احجز موعداً لاستشارة"></div>
+        <div class="cms-f"><div class="cms-l">CTA Secondaire</div><input type="text" value="تعرف على خدماتنا"></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:1rem"><div class="ct" style="margin-bottom:.85rem">Compteurs</div>
+          <div class="cms-f"><div class="cms-l">Valeur 1</div><input type="text" value="19+"></div>
+          <div class="cms-f"><div class="cms-l">Label 1</div><input type="text" value="سنة خبرة"></div>
+          <div class="cms-f"><div class="cms-l">Valeur 2</div><input type="text" value="5000+"></div>
+          <div class="cms-f"><div class="cms-l">Label 2</div><input type="text" value="ملف قضائي"></div>
+          <div class="cms-f"><div class="cms-l">Valeur 3</div><input type="text" value="100%"></div>
+          <div class="cms-f"><div class="cms-l">Label 3</div><input type="text" value="سرية تامة"></div>
+        </div>
+        <div class="card"><div class="ct" style="margin-bottom:.85rem">Photo Principale</div><div class="dz" style="padding:1rem"><div style="font-size:1.5rem">📸</div><div style="font-size:.7rem;color:var(--chm)">Changer la photo</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="cms-pr" class="css" style="display:none"><div class="card"><div class="ct" style="margin-bottom:.85rem">Page Profil</div><div class="fr"><div><div class="cms-f"><div class="cms-l">Biographie</div><textarea style="min-height:110px">منذ انطلاق مسيرتي المهنية سنة 2007...</textarea></div></div><div><div class="cms-f"><div class="cms-l">Principe 1</div><input type="text" value="🔒 السرية المطلقة"></div><div class="cms-f"><div class="cms-l">Principe 2</div><input type="text" value="⏰ الدقة والآجال"></div><div class="cms-f"><div class="cms-l">Principe 3</div><input type="text" value="💡 الوضوح والشفافية"></div><div class="cms-f"><div class="cms-l">Principe 4</div><input type="text" value="🎯 الاستراتيجية الاستباقية"></div></div></div></div></div>
+  <div id="cms-ex" class="css" style="display:none"><div class="g2"><div class="card"><div class="ct" style="margin-bottom:.85rem">1 — Droit Pénal</div><div class="cms-f"><div class="cms-l">Sous-titre</div><input type="text" value="دفاع صلب في القضايا الجزائية"></div><div class="cms-f"><div class="cms-l">Contenu</div><textarea>نمتلك خبرة طويلة في تمثيل المنوبين...</textarea></div></div><div class="card"><div class="ct" style="margin-bottom:.85rem">2 — Droit de la Famille</div><div class="cms-f"><div class="cms-l">Sous-titre</div><input type="text" value="قضايا الأسرة – حكمة وحزم"></div><div class="cms-f"><div class="cms-l">Contenu</div><textarea>ندرك حساسية قضايا الأسرة في المجتمع التونسي...</textarea></div></div><div class="card"><div class="ct" style="margin-bottom:.85rem">3 — Droit Civil & Immobilier</div><div class="cms-f"><div class="cms-l">Sous-titre</div><input type="text" value="حماية أملاككم وتأمين تعاملاتكم"></div><div class="cms-f"><div class="cms-l">Contenu</div><textarea>نتخصص في النزاعات العقارية المعقدة...</textarea></div></div><div class="card"><div class="ct" style="margin-bottom:.85rem">4 — Droit Commercial</div><div class="cms-f"><div class="cms-l">Sous-titre</div><input type="text" value="شريككم القانوني في عالم الأعمال"></div><div class="cms-f"><div class="cms-l">Contenu</div><textarea>نقدم استشارات قانونية متكاملة للشركات...</textarea></div></div></div></div>
+  <div id="cms-co" class="css" style="display:none"><div class="card"><div class="ct" style="margin-bottom:.85rem">Informations de Contact</div><div class="fr"><div><div class="cms-f"><div class="cms-l">Adresse</div><input type="text" value="نهج الزهور، المسكن، سوسة 4070"></div><div class="cms-f"><div class="cms-l">Téléphone</div><input type="text" value="73 264 360"></div><div class="cms-f"><div class="cms-l">Email</div><input type="text" value="contact@mhbm-avocats.tn"></div></div><div><div class="cms-f"><div class="cms-l">Lundi–Vendredi</div><input type="text" value="09:00–13:00 | 15:00–18:30"></div><div class="cms-f"><div class="cms-l">Samedi</div><input type="text" value="09:00–13:00 (sur RDV)"></div><div class="cms-f"><div class="cms-l">Dimanche</div><input type="text" value="Fermé"></div></div></div></div></div>
+  <div id="cms-fq" class="css" style="display:none"><div class="card"><div class="ch"><div class="ct">Questions Fréquentes</div><button class="btn bsm bg2" onclick="showT('FAQ ajoutée','ts')">+ Ajouter</button></div><div id="faqEd"></div></div></div>
+  <div id="cms-tm" class="css" style="display:none"><div class="card"><div class="ch"><div class="ct">Membres affichés sur le site</div><button class="btn bsm bg2">+ Ajouter</button></div><div id="tmEd"></div></div></div>
+</div>
+
+<!-- BLOG -->
+<div class="view" id="view-blog">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Blog & Articles</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">4 publiés · 2 brouillons</div></div>
+    <button class="btn bg2 bsm" onclick="om('nart')">✍️ Nouvel Article</button>
+  </div>
+  <div class="tabs"><div class="tab active">Tous (6)</div><div class="tab">Publiés (4)</div><div class="tab">Brouillons (2)</div><div class="tab">Catégories</div></div>
+  <div class="g3" id="blogG"></div>
+</div>
+
+<!-- SEO -->
+<div class="view" id="view-seo">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">SEO Center</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Référencement naturel — Toutes les pages</div></div>
+    <button class="btn bg2 bsm" onclick="showT('Sitemap.xml régénéré','ts')">🗺 Régénérer Sitemap</button>
+  </div>
+  <div class="g4" style="margin-bottom:1.05rem">
+    <div class="kpi ks"><div class="kl">Score Global</div><div class="kv">78/100</div></div>
+    <div class="kpi kn"><div class="kl">Pages Indexées</div><div class="kv">6</div></div>
+    <div class="kpi" style="border-top:3px solid var(--warning)"><div class="kl">À optimiser</div><div class="kv">2</div></div>
+    <div class="kpi kg"><div class="kl">Keywords ciblés</div><div class="kv">24</div></div>
+  </div>
+  <div id="seoP"></div>
+</div>
+
+<!-- ESPACE CLIENT -->
+<div class="view" id="view-espace">
+  <div style="margin-bottom:1.2rem"><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Espace Client — Vue Admin</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Simuler l'expérience d'un client connecté</div></div>
+  <div class="g2" style="margin-bottom:1rem">
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Sélectionner un Client</div>
+      <select onchange="loadPortal(this.value)"><option value="">— Choisir un client —</option><option value="c001">Ahmed Mansouri</option><option value="c003">STE Bâtisseurs du Sahel</option><option value="c006">Société Horizon SARL</option></select>
+    </div>
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Actions Rapides</div>
+      <div style="display:flex;gap:.42rem;flex-wrap:wrap">
+        <button class="btn bsm bo" onclick="showT('Message envoyé au client','ts')">✉️ Message</button>
+        <button class="btn bsm bs2" onclick="showT('Accès client activé','ts')">🔓 Activer</button>
+        <button class="btn bsm bd2" onclick="showT('Accès client bloqué','td')">🔒 Bloquer</button>
+      </div>
+    </div>
+  </div>
+  <div id="portalV"><div class="al ali">ℹ️ Sélectionnez un client ci-dessus pour simuler son espace personnel.</div></div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="view" id="view-analytics">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;flex-wrap:wrap;gap:.9rem">
+    <div><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Analytics & Statistiques</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Performances — Exercice 2026</div></div>
+    <button class="btn bo bsm">⬇ Rapport PDF</button>
+  </div>
+  <div class="g4" style="margin-bottom:1rem">
+    <div class="kpi kn"><div class="kl">Visiteurs/mois</div><div class="kv">1 247</div><div class="ktr tup">↑ +18%</div></div>
+    <div class="kpi kg"><div class="kl">Demandes reçues</div><div class="kv">36</div><div class="ktr tup">↑ +7</div></div>
+    <div class="kpi ks"><div class="kl">Taux conversion</div><div class="kv">42%</div><div class="ktr tup">↑ +5%</div></div>
+    <div class="kpi ki"><div class="kl">Pages vues</div><div class="kv">4 891</div></div>
+  </div>
+  <div class="g2" style="margin-bottom:1rem">
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Revenus 12 mois (TND)</div><canvas id="cAnR" height="185"></canvas></div>
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Clients par Origine</div><canvas id="cOri" height="185"></canvas></div>
+  </div>
+  <div class="g3">
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Top Pages Visitées</div><div id="topP"></div></div>
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Dossiers par Domaine</div><canvas id="cDomA" height="155"></canvas></div>
+    <div class="card"><div class="ct" style="margin-bottom:.85rem">Sources de Trafic</div><canvas id="cSrc" height="155"></canvas></div>
+  </div>
+</div>
+
+<!-- SECURITE -->
+<div class="view" id="view-securite">
+  <div style="margin-bottom:1.2rem"><div style="font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);font-weight:700">Sécurité & Journal</div><div style="font-size:.7rem;color:var(--chm);margin-top:.18rem">Activités · Connexions · Permissions</div></div>
+  <div class="g3" style="margin-bottom:1rem">
+    <div class="kpi ks"><div class="kl">Connexions (30j)</div><div class="kv">47</div></div>
+    <div class="kpi" style="border-top:3px solid var(--warning)"><div class="kl">Actions sensibles</div><div class="kv">12</div></div>
+    <div class="kpi kd"><div class="kl">Tentatives échouées</div><div class="kv">2</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><div class="ct">Journal des Activités</div></div><div class="tw"><table><thead><tr><th>Date/Heure</th><th>Utilisateur</th><th>Action</th><th>IP</th></tr></thead><tbody id="actTb"></tbody></table></div></div>
+    <div class="card"><div class="ch"><div class="ct">Historique Connexions</div></div><div class="tw"><table><thead><tr><th>Date</th><th>Utilisateur</th><th>IP</th><th>Statut</th></tr></thead><tbody id="conTb"></tbody></table></div></div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+<!-- TOAST -->
+<div class="tc" id="tc"></div>
+<!-- MODALS -->
+<div class="mo" id="mo-ndoss"><div class="md"><div class="md-h"><div class="md-t">📁 Nouveau Dossier</div><button class="md-x" onclick="cm('ndoss')">×</button></div><div class="md-b"><div class="fst">Informations Générales</div><div class="fr"><div class="fg"><label>Intitulé *</label><input type="text" placeholder="Ex: Affaire Ben Ali / Litige..."></div><div class="fg"><label>Client *</label><select><option>— Sélectionner —</option><option>Ahmed Mansouri</option><option>Leila Chaouachi</option><option>STE Bâtisseurs du Sahel</option></select></div></div><div class="fr"><div class="fg"><label>Type de Droit *</label><select><option>Pénal</option><option>Civil</option><option>Commercial</option><option>Famille</option><option>Administratif</option></select></div><div class="fg"><label>Juridiction</label><select><option>Tribunal 1ère instance Tunis</option><option>Tribunal 1ère instance Sousse</option><option>Cour d'appel Tunis</option><option>Tribunal administratif</option></select></div></div><div class="fr"><div class="fg"><label>Avocat responsable</label><select><option>Me. Ben Makhlouf</option><option>Me. Trabelsi</option></select></div><div class="fg"><label>Priorité</label><select><option>Normale</option><option>Haute</option><option>Urgente</option></select></div></div><div class="fr"><div class="fg"><label>Date d'ouverture</label><input type="date" value="2026-06-20"></div><div class="fg"><label>Échéance prévue</label><input type="date"></div></div><div class="fst" style="margin-top:1rem">Honoraires</div><div class="fr"><div class="fg"><label>Montant convenu (TND)</label><input type="number" placeholder="0.00"></div><div class="fg"><label>Mode de règlement</label><select><option>Forfait</option><option>Horaire</option><option>Au résultat</option></select></div></div><div class="fg"><label>Notes initiales</label><textarea placeholder="Résumé des faits, contexte..."></textarea></div></div><div class="md-f"><button class="btn bo" onclick="cm('ndoss')">Annuler</button><button class="btn bg2" onclick="svD()">Créer le Dossier</button></div></div></div>
+
+<div class="mo" id="mo-ncl"><div class="md"><div class="md-h"><div class="md-t">👤 Nouveau Client</div><button class="md-x" onclick="cm('ncl')">×</button></div><div class="md-b"><div class="fr"><div class="fg"><label>Prénom *</label><input type="text" placeholder="Mohamed"></div><div class="fg"><label>Nom *</label><input type="text" placeholder="Ben Ali"></div></div><div class="fr"><div class="fg"><label>Type</label><select><option>Particulier</option><option>Société</option><option>VIP</option></select></div><div class="fg"><label>CIN / RC</label><input type="text"></div></div><div class="fr"><div class="fg"><label>Téléphone *</label><input type="tel" placeholder="+216 xx xxx xxx"></div><div class="fg"><label>Email</label><input type="email"></div></div><div class="fr"><div class="fg"><label>Nationalité</label><input type="text" value="Tunisienne"></div><div class="fg"><label>Résidence</label><select><option>Tunisie</option><option>France</option><option>Italie</option><option>Allemagne</option><option>Autre</option></select></div></div><div class="fg"><label>Adresse</label><textarea style="min-height:55px" placeholder="Adresse complète..."></textarea></div></div><div class="md-f"><button class="btn bo" onclick="cm('ncl')">Annuler</button><button class="btn bg2" onclick="svCl()">Enregistrer</button></div></div></div>
+
+<div class="mo" id="mo-ncon"><div class="md"><div class="md-h"><div class="md-t">💬 Nouvelle Consultation</div><button class="md-x" onclick="cm('ncon')">×</button></div><div class="md-b"><div class="fr"><div class="fg"><label>Type</label><select><option>Vidéo (Zoom)</option><option>Vidéo (Google Meet)</option><option>Écrite</option><option>En cabinet</option></select></div><div class="fg"><label>Client</label><select><option>— Sélectionner —</option><option>Ahmed Mansouri</option><option>Leila Chaouachi</option><option>Nouveau client</option></select></div></div><div class="fr"><div class="fg"><label>Date</label><input type="date"></div><div class="fg"><label>Heure</label><input type="time" value="10:00"></div></div><div class="fr"><div class="fg"><label>Durée</label><select><option>30 min</option><option>1 heure</option><option>1h30</option><option>2 heures</option></select></div><div class="fg"><label>Honoraires (TND)</label><input type="number" placeholder="0"></div></div><div class="fg"><label>Objet / Sujet</label><textarea></textarea></div><div class="fg"><label>Lien Réunion</label><input type="text" placeholder="https://zoom.us/..."></div></div><div class="md-f"><button class="btn bo" onclick="cm('ncon')">Annuler</button><button class="btn bg2" onclick="svCon()">Confirmer</button></div></div></div>
+
+<div class="mo" id="mo-nev"><div class="md" style="max-width:470px"><div class="md-h"><div class="md-t">📅 Nouvel Événement</div><button class="md-x" onclick="cm('nev')">×</button></div><div class="md-b"><div class="fg"><label>Type d'Événement</label><select><option>Rendez-vous client</option><option>Audience tribunal</option><option>Consultation vidéo</option><option>Réunion interne</option><option>Délai procédural</option></select></div><div class="fg"><label>Titre *</label><input type="text" placeholder="Ex: Audience affaire Mansouri"></div><div class="fr"><div class="fg"><label>Date *</label><input type="date"></div><div class="fg"><label>Heure</label><input type="time" value="09:00"></div></div><div class="fr"><div class="fg"><label>Durée</label><select><option>30 min</option><option>1h</option><option>2h</option><option>Journée</option></select></div><div class="fg"><label>Lieu / Juridiction</label><input type="text" placeholder="Tribunal de Tunis..."></div></div><div class="fg"><label>Dossier Lié</label><select><option>— Optionnel —</option><option>DOS-2026-0042</option><option>DOS-2026-0039</option></select></div><div class="fg"><label>Notes</label><textarea style="min-height:55px"></textarea></div></div><div class="md-f"><button class="btn bo" onclick="cm('nev')">Annuler</button><button class="btn bg2" onclick="svEv()">Ajouter</button></div></div></div>
+
+<div class="mo" id="mo-nfac"><div class="md"><div class="md-h"><div class="md-t">💰 Nouvelle Facture</div><button class="md-x" onclick="cm('nfac')">×</button></div><div class="md-b"><div class="fr"><div class="fg"><label>Client *</label><select><option>— Sélectionner —</option><option>Ahmed Mansouri</option><option>STE Bâtisseurs du Sahel</option></select></div><div class="fg"><label>Dossier Lié</label><select><option>— Optionnel —</option><option>DOS-2026-0042</option><option>DOS-2026-0039</option></select></div></div><div class="fst" style="margin-top:.85rem">Lignes de Prestation</div><div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:.42rem;margin-bottom:.42rem"><label>Description</label><label>Qté</label><label>Prix (TND)</label></div><div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:.42rem;margin-bottom:.6rem"><input type="text" placeholder="Honoraires de représentation"><input type="number" value="1"><input type="number" placeholder="0.00"></div><button class="btn bsm bo" onclick="showT('Ligne ajoutée','info')">+ Ajouter ligne</button><div style="margin-top:.85rem;padding:.85rem;background:var(--cream);text-align:right"><div style="font-size:.72rem;color:var(--chm)">Sous-total : — TND</div><div style="font-size:.72rem;color:var(--chm)">TVA (0%) : 0,00 TND</div><div style="font-size:.85rem;font-weight:700;color:var(--navy);margin-top:.32rem">Total : — TND</div></div><div class="fr" style="margin-top:.85rem"><div class="fg"><label>Date d'émission</label><input type="date" value="2026-06-20"></div><div class="fg"><label>Date d'échéance</label><input type="date"></div></div><div class="fg"><label>Notes</label><textarea style="min-height:52px"></textarea></div></div><div class="md-f"><button class="btn bo" onclick="cm('nfac')">Annuler</button><button class="btn bo" onclick="showT('Brouillon sauvegardé','info');cm('nfac')">Brouillon</button><button class="btn bg2" onclick="svFac()">Émettre</button></div></div></div>
+
+<div class="mo" id="mo-udoc"><div class="md" style="max-width:450px"><div class="md-h"><div class="md-t">📄 Importer Document</div><button class="md-x" onclick="cm('udoc')">×</button></div><div class="md-b"><div class="dz" style="margin-bottom:.85rem"><div style="font-size:1.75rem;margin-bottom:.38rem">📎</div><div style="font-size:.72rem;color:var(--chm)">Glissez votre fichier ici ou cliquez</div></div><div class="fg"><label>Catégorie</label><select><option>Requêtes & Mémoires</option><option>Jugements & Décisions</option><option>Contrats & Actes</option><option>Correspondances</option><option>Pièces à conviction</option></select></div><div class="fg"><label>Dossier Lié</label><select><option>— Général —</option><option>DOS-2026-0042</option><option>DOS-2026-0039</option></select></div><div class="fg"><label>Description</label><input type="text"></div></div><div class="md-f"><button class="btn bo" onclick="cm('udoc')">Annuler</button><button class="btn bg2" onclick="showT('Document importé !','ts');cm('udoc')">Importer</button></div></div></div>
+
+<div class="mo" id="mo-nart"><div class="md" style="max-width:670px"><div class="md-h"><div class="md-t">✍️ Nouvel Article</div><button class="md-x" onclick="cm('nart')">×</button></div><div class="md-b"><div class="fg"><label>Titre *</label><input type="text" placeholder="Ex: Guide complet du divorce en Tunisie 2026"></div><div class="fr"><div class="fg"><label>Catégorie</label><select><option>Droit de la Famille</option><option>Droit Pénal</option><option>Droit Civil</option><option>Droit Commercial</option></select></div><div class="fg"><label>Statut</label><select><option>Brouillon</option><option>Publié</option><option>Planifié</option></select></div></div><div class="fg"><label>Tags</label><input type="text" placeholder="divorce, tunisie, famille..."></div><div class="fg"><label>Image de couverture</label><div class="dz" style="padding:.9rem"><div style="font-size:1.4rem">🖼</div><div style="font-size:.7rem;color:var(--chm)">Importer une image</div></div></div><div class="fg"><label>Contenu</label><textarea style="min-height:175px" placeholder="Rédigez votre article ici..."></textarea></div><div class="fst" style="margin-top:.85rem">SEO</div><div class="fg"><label>Meta Title</label><input type="text"></div><div class="fg"><label>Meta Description</label><textarea style="min-height:52px"></textarea></div></div><div class="md-f"><button class="btn bo" onclick="cm('nart')">Annuler</button><button class="btn bo" onclick="showT('Brouillon sauvegardé','info');cm('nart')">Brouillon</button><button class="btn bg2" onclick="showT('Article publié !','ts');cm('nart')">Publier</button></div></div></div>
+
+<div class="mo" id="mo-nmb"><div class="md" style="max-width:450px"><div class="md-h"><div class="md-t">🏛 Ajouter un Membre</div><button class="md-x" onclick="cm('nmb')">×</button></div><div class="md-b"><div class="fr"><div class="fg"><label>Prénom *</label><input type="text"></div><div class="fg"><label>Nom *</label><input type="text"></div></div><div class="fg"><label>Titre / Poste</label><input type="text" placeholder="Ex: Avocat Collaborateur"></div><div class="fg"><label>Rôle Dashboard</label><select><option>Avocat</option><option>Assistant Juridique</option><option>Secrétariat</option><option>Comptabilité</option><option>Support Client</option></select></div><div class="fr"><div class="fg"><label>Email</label><input type="email"></div><div class="fg"><label>Téléphone</label><input type="tel"></div></div><div class="fg"><label>Photo</label><div class="dz" style="padding:.9rem"><div style="font-size:1.4rem">📸</div><div style="font-size:.7rem;color:var(--chm)">Importer une photo</div></div></div></div><div class="md-f"><button class="btn bo" onclick="cm('nmb')">Annuler</button><button class="btn bg2" onclick="showT('Membre ajouté !','ts');cm('nmb')">Ajouter</button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ═══ DATA ═══
+const ROLES={admin:{n:'Maître Ben Makhlouf',t:'Administrateur Principal',i:'MB'},avocat:{n:'Me. Sonia Trabelsi',t:'Avocate Collaboratrice',i:'ST'},assistant:{n:'K. Ben Salah',t:'Assistant Juridique',i:'KB'},secretariat:{n:'F. Mejri',t:'Secrétariat',i:'FM'},comptable:{n:'H. Baccouche',t:'Comptabilité',i:'HB'}};
+const CL=[
+  {id:'c001',n:'Ahmed Mansouri',t:'Particulier',tel:'+216 98 234 567',p:'Tunisie',v:'Tunis',vip:true,d:2},
+  {id:'c002',n:'Leila Chaouachi',t:'Particulier',tel:'+216 55 678 901',p:'Tunisie',v:'Sousse',vip:false,d:1},
+  {id:'c003',n:'STE Bâtisseurs du Sahel',t:'Société',tel:'+216 73 441 200',p:'Tunisie',v:'Sousse',vip:true,d:3},
+  {id:'c004',n:'Kamel Gharbi',t:'Particulier',tel:'+33 6 12 34 56 78',p:'France',v:'Paris',vip:false,d:1},
+  {id:'c005',n:'Nadia Belhaj',t:'Particulier',tel:'+33 7 98 76 54 32',p:'France',v:'Lyon',vip:false,d:1},
+  {id:'c006',n:'Société Horizon SARL',t:'Société',tel:'+216 71 234 567',p:'Tunisie',v:'Tunis',vip:true,d:2},
+  {id:'c007',n:'Mondher Ezzeddine',t:'Particulier',tel:'+216 22 345 678',p:'Tunisie',v:'Sfax',vip:false,d:1},
+  {id:'c008',n:'Rania Ben Othman',t:'Particulier',tel:'+49 176 1234 5678',p:'Allemagne',v:'Berlin',vip:false,d:1},
+  {id:'c009',n:'Hichem Slama',t:'Particulier',tel:'+216 50 987 654',p:'Tunisie',v:'Monastir',vip:false,d:1},
+  {id:'c010',n:'Fatma Khelil',t:'Particulier',tel:'+39 333 1234 567',p:'Italie',v:'Milan',vip:false,d:1},
+  {id:'c011',n:'Groupe Elites Corp',t:'Société',tel:'+216 71 567 890',p:'Tunisie',v:'Tunis',vip:false,d:2},
+  {id:'c012',n:'Slim Boujneh',t:'Particulier',tel:'+216 29 876 543',p:'Tunisie',v:'Hammamet',vip:false,d:1},
+];
+const DOS=[
+  {r:'DOS-2026-0042',ti:'Affaire Mansouri / Conflit Héritage',cl:'Ahmed Mansouri',ty:'Civil',st:'En cours',av:'Me. Ben Makhlouf',ec:'2026-07-15',pr:'Haute'},
+  {r:'DOS-2026-0041',ti:'Divorce Chaouachi',cl:'Leila Chaouachi',ty:'Famille',st:'Audience',av:'Me. Ben Makhlouf',ec:'2026-06-25',pr:'Normale'},
+  {r:'DOS-2026-0040',ti:'Contentieux Commercial — Bâtisseurs',cl:'STE Bâtisseurs du Sahel',ty:'Commercial',st:'En cours',av:'Me. Trabelsi',ec:'2026-08-01',pr:'Haute'},
+  {r:'DOS-2026-0039',ti:'Affaire Pénale — Gharbi',cl:'Kamel Gharbi',ty:'Pénal',st:'En cours',av:'Me. Ben Makhlouf',ec:'2026-07-30',pr:'Urgente'},
+  {r:'DOS-2026-0038',ti:'Litige Immobilier Belhaj',cl:'Nadia Belhaj',ty:'Civil',st:'Suspendu',av:'Me. Trabelsi',ec:'2026-09-01',pr:'Normale'},
+  {r:'DOS-2026-0037',ti:'Constitution SARL Horizon',cl:'Société Horizon SARL',ty:'Commercial',st:'Clôturé',av:'Me. Ben Makhlouf',ec:'2026-05-30',pr:'Normale'},
+  {r:'DOS-2026-0036',ti:"Garde d'enfant — Ezzeddine",cl:'Mondher Ezzeddine',ty:'Famille',st:'Audience',av:'Me. Ben Makhlouf',ec:'2026-06-28',pr:'Haute'},
+  {r:'DOS-2026-0035',ti:'Licenciement abusif — Ben Othman',cl:'Rania Ben Othman',ty:'Administratif',st:'En cours',av:'Me. Trabelsi',ec:'2026-08-15',pr:'Normale'},
+  {r:'DOS-2026-0034',ti:'Recouvrement créance — Slama',cl:'Hichem Slama',ty:'Commercial',st:'Audience',av:'Me. Ben Makhlouf',ec:'2026-07-05',pr:'Haute'},
+  {r:'DOS-2026-0033',ti:'Succession Khelil',cl:'Fatma Khelil',ty:'Civil',st:'En cours',av:'Me. Trabelsi',ec:'2026-09-20',pr:'Normale'},
+  {r:'DOS-2026-0032',ti:'Litige Société Elites',cl:'Groupe Elites Corp',ty:'Commercial',st:'En cours',av:'Me. Ben Makhlouf',ec:'2026-08-30',pr:'Urgente'},
+  {r:'DOS-2026-0031',ti:'Chèque sans provision — Boujneh',cl:'Slim Boujneh',ty:'Pénal',st:'Audience',av:'Me. Ben Makhlouf',ec:'2026-06-24',pr:'Haute'},
+  {r:'DOS-2026-0030',ti:'Bail commercial Bâtisseurs',cl:'STE Bâtisseurs du Sahel',ty:'Civil',st:'En cours',av:'Me. Trabelsi',ec:'2026-07-20',pr:'Normale'},
+  {r:'DOS-2026-0029',ti:'Partage judiciaire immeuble',cl:'Ahmed Mansouri',ty:'Civil',st:'En cours',av:'Me. Ben Makhlouf',ec:'2026-10-01',pr:'Normale'},
+  {r:'DOS-2026-0028',ti:'Franchise Horizon',cl:'Société Horizon SARL',ty:'Commercial',st:'En cours',av:'Me. Trabelsi',ec:'2026-09-15',pr:'Normale'},
+  {r:'DOS-2026-0027',ti:'Litige foncier Elites Corp',cl:'Groupe Elites Corp',ty:'Civil',st:'En cours',av:'Me. Ben Makhlouf',ec:'2026-08-05',pr:'Normale'},
+  {r:'DOS-2026-0026',ti:'Adoption internationale',cl:'Rania Ben Othman',ty:'Famille',st:'En cours',av:'Me. Trabelsi',ec:'2026-11-01',pr:'Normale'},
+  {r:'DOS-2026-0025',ti:'Contentieux fiscal Bâtisseurs',cl:'STE Bâtisseurs du Sahel',ty:'Administratif',st:'En cours',av:'Me. Ben Makhlouf',ec:'2026-09-30',pr:'Haute'},
+];
+const FAC=[
+  {n:'FACT-2026-010',cl:'Ahmed Mansouri',d:'DOS-2026-0042',m:'3 200',e:'01/06/2026',ec:'01/07/2026',st:'Payée'},
+  {n:'FACT-2026-009',cl:'STE Bâtisseurs du Sahel',d:'DOS-2026-0040',m:'5 500',e:'15/05/2026',ec:'15/06/2026',st:'En retard'},
+  {n:'FACT-2026-008',cl:'Leila Chaouachi',d:'DOS-2026-0041',m:'1 800',e:'10/06/2026',ec:'10/07/2026',st:'Émise'},
+  {n:'FACT-2026-007',cl:'Kamel Gharbi',d:'DOS-2026-0039',m:'2 500',e:'20/05/2026',ec:'20/06/2026',st:'Payée'},
+  {n:'FACT-2026-006',cl:'Groupe Elites Corp',d:'DOS-2026-0032',m:'4 200',e:'05/06/2026',ec:'05/07/2026',st:'Émise'},
+  {n:'FACT-2026-005',cl:'Mondher Ezzeddine',d:'DOS-2026-0036',m:'900',e:'01/05/2026',ec:'01/06/2026',st:'En retard'},
+  {n:'FACT-2026-004',cl:'Société Horizon SARL',d:'DOS-2026-0037',m:'3 800',e:'15/04/2026',ec:'15/05/2026',st:'Payée'},
+  {n:'FACT-2026-003',cl:'Hichem Slama',d:'DOS-2026-0034',m:'1 200',e:'12/06/2026',ec:'12/07/2026',st:'Émise'},
+  {n:'FACT-2026-002',cl:'STE Bâtisseurs du Sahel',d:'DOS-2026-0025',m:'2 800',e:'18/06/2026',ec:'18/07/2026',st:'Brouillon'},
+  {n:'FACT-2026-001',cl:'Nadia Belhaj',d:'DOS-2026-0038',m:'1 500',e:'01/03/2026',ec:'01/04/2026',st:'Payée'},
+];
+const EQ=[
+  {i:'MB',n:'Maître Mohamed Haythem Ben Makhlouf',ti:'Avocat à la Cour de Cassation',r:'Administrateur Principal',d:12,st:'Actif',co:'Il y a 2 min'},
+  {i:'ST',n:'Me. Sonia Trabelsi',ti:'Avocate Collaboratrice',r:'Avocat',d:6,st:'Actif',co:'Il y a 1h'},
+  {i:'KB',n:'Karim Ben Salah',ti:'Assistant Juridique',r:'Assistant Juridique',d:18,st:'Actif',co:'Hier'},
+  {i:'FM',n:'Fatma Mejri',ti:'Responsable Secrétariat',r:'Secrétariat',d:0,st:'Actif',co:'Il y a 30 min'},
+  {i:'HB',n:'Habib Baccouche',ti:'Responsable Comptabilité',r:'Comptabilité',d:0,st:'Actif',co:'Il y a 3h'},
+  {i:'RS',n:'Rim Saadouni',ti:'Support Client',r:'Support Client',d:0,st:'En congé',co:'Il y a 2j'},
+];
+const NP=[
+  {c:'#9B2335',tx:'Audience urgente demain — DOS-2026-0042 (Tribunal Tunis)',t:'Il y a 5 min',u:true},
+  {c:'#C5A059',tx:'Nouvelle demande reçue — Ahmed Ghariani',t:'Il y a 20 min',u:true},
+  {c:'#2D7A4F',tx:'Paiement reçu — FACT-2026-007 — 2 500 TND',t:'Il y a 1h',u:true},
+  {c:'#1a6b9e',tx:'Document uploadé — DOS-2026-0039',t:'Il y a 2h',u:true},
+  {c:'#C5A059',tx:'Délai procédural DOS-2026-0031 — 24h restantes',t:'Il y a 3h',u:true},
+  {c:'#555',tx:'Connexion — Me. Trabelsi',t:'Hier',u:false},
+  {c:'#2D7A4F',tx:'Paiement reçu — FACT-2026-004 — 3 800 TND',t:'Hier',u:false},
+];
+const EVT=[
+  {j:20,ti:'RDV Ahmed Mansouri',ty:'rdv',h:'09:00'},
+  {j:20,ti:'Consultation vidéo — K. Gharbi',ty:'vi',h:'11:00'},
+  {j:22,ti:'Audience — DOS-2026-0031',ty:'au',h:'09:30'},
+  {j:24,ti:'Audience — DOS-2026-0041',ty:'au',h:'10:00'},
+  {j:25,ti:'RDV Bâtisseurs du Sahel',ty:'rdv',h:'14:00'},
+  {j:25,ti:'Réunion interne bilan',ty:'re',h:'16:30'},
+  {j:28,ti:'Audience — DOS-2026-0036',ty:'au',h:'09:00'},
+  {j:30,ti:'Consultation écrite — N. Belhaj',ty:'rdv',h:'—'},
+];
+const DEM=[
+  {d:'20/06 08:45',n:'Sami Dridi',c:'+216 55 123 456',ty:'Pénal',m:'Accusé de fraude, besoin avocat urgent',st:'Nouvelle'},
+  {d:'19/06 17:20',n:'Houda Fenniche',c:'h.fenniche@email.com',ty:'Famille',m:'Demande divorce, enfants mineurs',st:'Nouvelle'},
+  {d:'19/06 14:05',n:'Tarek Ben Romdhane',c:'+33 6 45 67 89 00',ty:'Commercial',m:'Litige avec associé, dissolution société',st:'Nouvelle'},
+  {d:'18/06 11:30',n:'Sana Mabrouk',c:'+216 22 987 654',ty:'Civil',m:'Problème héritage, partage maison',st:'En traitement'},
+  {d:'18/06 09:15',n:'Groupe TBM SARL',c:'contact@tbm.tn',ty:'Administratif',m:'Contentieux fiscal — direction impôts',st:'Nouvelle'},
+];
+const SEO=[
+  {p:"Page d'Accueil",mt:"محامٍ لدى التعقيب تونس - مكتب بن مخلوف",md:"أكثر من 19 عاماً من الخبرة...",sc:85,st:'Indexée'},
+  {p:"Profil Professionnel",mt:"الأستاذ محمد هيثم بن مخلوف",md:"مسار أكاديمي ومهني حافل...",sc:78,st:'Indexée'},
+  {p:"Expertises",mt:"مجالات الاختصاص القانوني",md:"تغطية شاملة لنزاعاتك...",sc:82,st:'Indexée'},
+  {p:"Espace Client",mt:"فضاء الحرفاء - استشارة قانونية",md:"احجز استشارتك القانونية...",sc:70,st:'Indexée'},
+  {p:"Bibliothèque",mt:"المكتبة القانونية - مقالات",md:"وعي قانوني لحماية حقوقك...",sc:65,st:'En attente'},
+  {p:"Contact",mt:"اتصل بمكتب بن مخلوف سوسة",md:"تواصل معنا من أي مكان...",sc:72,st:'Indexée'},
+];
+const ART=[
+  {ti:'Droit du Divorce en Tunisie — Guide 2026',ca:'Famille',d:'12 juin 2026',st:'Publié',v:1240},
+  {ti:'Le Chèque Sans Provision — Risques et Recours',ca:'Commercial',d:'5 juin 2026',st:'Publié',v:876},
+  {ti:'Protéger son Bien Immobilier — Conseils',ca:'Civil',d:'28 mai 2026',st:'Publié',v:654},
+  {ti:'Droits du Salarié en cas de Licenciement',ca:'Travail',d:'20 mai 2026',st:'Publié',v:1102},
+  {ti:'La Succession en Droit Tunisien Expliquée',ca:'Famille',d:'—',st:'Brouillon',v:0},
+  {ti:'Créer une SARL en Tunisie — Étapes Clés',ca:'Commercial',d:'—',st:'Brouillon',v:0},
+];
+const PERM=[
+  {m:'Dossiers Juridiques',p:[1,1,0,0,0]},{m:'Clients',p:[1,1,1,1,0]},
+  {m:'Consultations',p:[1,1,1,1,0]},{m:'Agenda',p:[1,1,1,1,0]},
+  {m:'Équipe',p:[1,0,0,0,0]},{m:'Facturation',p:[1,0,0,0,1]},
+  {m:'Documents',p:[1,1,1,0,0]},{m:'Gestion du Site',p:[1,0,0,0,0]},
+  {m:'Blog & Articles',p:[1,1,0,0,0]},{m:'SEO Center',p:[1,0,0,0,0]},
+  {m:'Analytics',p:[1,1,0,0,1]},{m:'Sécurité',p:[1,0,0,0,0]},
+];
+const LOG=[
+  {dt:'20/06 09:42',u:'Me. Ben Makhlouf',a:'Création dossier DOS-2026-0042',ip:'196.203.xx.xx'},
+  {dt:'20/06 09:15',u:'F. Mejri',a:'Ajout RDV — Ahmed Mansouri',ip:'196.203.xx.xx'},
+  {dt:'19/06 17:30',u:'Me. Trabelsi',a:'Upload document DOS-2026-0040',ip:'197.15.xx.xx'},
+  {dt:'19/06 16:45',u:'H. Baccouche',a:'Émission FACT-2026-010',ip:'196.203.xx.xx'},
+  {dt:'19/06 14:20',u:'K. Ben Salah',a:'Statut DOS-2026-0039 → En cours',ip:'196.203.xx.xx'},
+  {dt:'19/06 11:05',u:'Me. Ben Makhlouf',a:'Publication article blog',ip:'196.203.xx.xx'},
+];
+const CONN=[
+  {d:'20/06/2026 08:42',u:'Me. Ben Makhlouf',ip:'196.203.12.45',st:'Succès'},
+  {d:'20/06/2026 08:50',u:'F. Mejri',ip:'196.203.12.46',st:'Succès'},
+  {d:'19/06/2026 17:15',u:'Me. Trabelsi',ip:'197.15.234.12',st:'Succès'},
+  {d:'19/06/2026 16:30',u:'H. Baccouche',ip:'196.203.12.47',st:'Succès'},
+  {d:'18/06/2026 09:10',u:'Inconnu',ip:'45.132.56.78',st:'Échec'},
+  {d:'17/06/2026 14:22',u:'K. Ben Salah',ip:'196.203.12.48',st:'Succès'},
+];
+const FAQS=[
+  {q:'كيف يمكنني توكيل الأستاذ في قضية ما؟',a:'يتم ذلك عبر إبرام إعلام نيابة رسمي بعد جلسة أولية...'},
+  {q:'هل يمكن التدخل في قضية خارج تونس العاصمة؟',a:'نعم، يباشر الأستاذ القضايا أمام كافة محاكم الجمهورية.'},
+  {q:'ما هي الوثائق المطلوبة لفتح قضية طلاق؟',a:'مضمون ولادة، عقد زواج، بطاقة هوية وطنية...'},
+  {q:'هل تتوفر استشارات عن بعد؟',a:'نعم، عبر Zoom أو Google Meet واستشارات كتابية مخصصة.'},
+];
+
+// ═══ HELPERS ═══
+const TITLES={dashboard:['Tableau de Bord','Vue globale du cabinet'],dossiers:['Dossiers Juridiques','Gestion des affaires'],clients:['Clients','Base de données clients'],consultations:['Consultations','Gestion des demandes'],agenda:['Agenda','Calendrier et rendez-vous'],equipe:['Équipe','Membres et permissions'],facturation:['Facturation','Honoraires et paiements'],documents:['Documents','Bibliothèque documentaire'],demandes:['Demandes Reçues','Leads du site public'],cms:['Gestion du Site Web','Éditeur sans code'],blog:['Blog & Articles','Contenu éditorial'],seo:['SEO Center','Référencement naturel'],espace:['Espace Client','Vue simulée portail client'],analytics:['Analytics','Statistiques 2026'],securite:['Sécurité & Journal','Activités et connexions']};
+function sbdg(s){const m={'En cours':'bdi','Audience':'bdw','Suspendu':'bdn','Clôturé':'bds','Nouveau':'bdd'};return`<span class="bdg ${m[s]||'bdn'}">${s}</span>`;}
+function pbdg(p){const m={'Urgente':'bdd','Haute':'bdw','Normale':'bdn'};return`<span class="bdg ${m[p]||'bdn'}">${p}</span>`;}
+function fbdg(s){const m={'Payée':'bds','Émise':'bdi','En retard':'bdd','Brouillon':'bdn'};return`<span class="bdg ${m[s]||'bdn'}">${s}</span>`;}
+function ac(id,t){let s=0,step=t/55,timer=setInterval(()=>{s+=step;if(s>=t){s=t;clearInterval(timer);}const el=document.getElementById(id);if(el)el.textContent=Math.floor(s).toLocaleString('fr-FR');},1100/55);}
+
+// ═══ AUTH ═══
+function doLogin(){
+  const k=document.getElementById('lr').value,r=ROLES[k];
+  ['sbAv','tbAv'].forEach(id=>document.getElementById(id).textContent=r.i);
+  document.getElementById('sbNm').textContent=r.n;
+  document.getElementById('sbRl').textContent=r.t;
+  document.getElementById('tbNm').textContent=r.n;
+  document.getElementById('ls').style.display='none';
+  document.getElementById('app').style.display='block';
+  init();showT('Bienvenue, '+r.n+' !','ts');
+}
+function doLogout(){document.getElementById('app').style.display='none';document.getElementById('ls').style.display='flex';}
+
+// ═══ NAVIGATION ═══
+function sv(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const v=document.getElementById('view-'+id);if(v)v.classList.add('active');
+  const ni=document.querySelector('[data-v="'+id+'"]');if(ni)ni.classList.add('active');
+  const t=TITLES[id]||[id,''];
+  document.getElementById('tbTi').innerHTML=t[0]+'<span>'+t[1]+' · 20 juin 2026</span>';
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('np').classList.remove('open');
+  if(id==='agenda')renderCal();
+  if(id==='analytics')initAnCharts();
+  window.scrollTo(0,0);
+}
+function toggleSb(){document.getElementById('sidebar').classList.toggle('open');}
+
+// ═══ NOTIFICATIONS ═══
+function renderNp(){
+  document.getElementById('npList').innerHTML=NP.map(n=>`<div class="np-it ${n.u?'u':''}"><div class="np-dt" style="background:${n.c}"></div><div><div class="np-tx">${n.tx}</div><div class="np-tm">${n.t}</div></div></div>`).join('');
+}
+function toggleNp(){document.getElementById('np').classList.toggle('open');}
+function clearNp(){NP.forEach(n=>n.u=false);document.getElementById('nc').textContent='0';renderNp();showT('Notifications marquées comme lues','ts');}
+
+// ═══ MODAL ═══
+function om(id){document.getElementById('mo-'+id).classList.add('open');}
+function cm(id){document.getElementById('mo-'+id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// ═══ TOAST ═══
+function showT(msg,type='info'){
+  const c=document.getElementById('tc'),t=document.createElement('div');
+  t.className='toast '+(type||'');
+  const ic={ts:'✓',td:'✗',info:'ℹ'};
+  t.innerHTML='<span>'+(ic[type]||'ℹ')+'</span><span>'+msg+'</span>';
+  c.appendChild(t);setTimeout(()=>t.remove(),3500);
+}
+
+// ═══ SAVE ACTIONS ═══
+function svD(){showT('Dossier créé avec succès !','ts');cm('ndoss');}
+function svCl(){showT('Client enregistré','ts');cm('ncl');}
+function svCon(){showT('Consultation confirmée','ts');cm('ncon');}
+function svEv(){showT('Événement ajouté à l\'agenda','ts');cm('nev');}
+function svFac(){showT('Facture émise avec succès','ts');cm('nfac');}
+
+// ═══ INIT ═══
+function init(){
+  setTimeout(()=>{ac('kD',18);ac('kC',12);ac('kR',14200);ac('kA',4);},200);
+  renderNp();buildDash();buildCharts();
+  renderDoss(DOS);renderCl();renderKan();renderEq();renderFac();renderDocs();renderDem();renderBlog();renderSEO();renderSec();renderCal();buildCms();
+}
+
+// ═══ DASHBOARD ═══
+function buildDash(){
+  const td=EVT.filter(e=>e.j===20);
+  document.getElementById('agTd').innerHTML=td.length?td.map(e=>`<div style="display:flex;gap:.65rem;padding:.52rem 0;border-bottom:1px solid var(--border)"><div style="color:var(--gold);font-size:.63rem;font-weight:700;min-width:36px">${e.h}</div><div style="font-size:.7rem">${e.ti}</div></div>`).join(''):'<div style="font-size:.72rem;color:var(--chm);padding:.7rem 0;text-align:center">Aucun événement</div>';
+  const ug=DOS.filter(d=>d.pr==='Urgente'||d.pr==='Haute').slice(0,3);
+  document.getElementById('urgD').innerHTML=ug.map(d=>`<div style="padding:.52rem 0;border-bottom:1px solid var(--border)"><div style="font-size:.65rem;font-weight:700;color:var(--gold)">${d.r}</div><div style="font-size:.66rem;color:var(--charcoal);margin:.1rem 0">${d.ti}</div>${pbdg(d.pr)}</div>`).join('');
+  document.getElementById('recM').innerHTML=DEM.slice(0,4).map(d=>`<div style="padding:.52rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between"><div style="font-size:.7rem;font-weight:600;color:var(--navy)">${d.n}</div><span class="bdg ${d.st==='Nouvelle'?'bdd':'bdw'}">${d.st}</span></div><div style="font-size:.63rem;color:var(--chm)">${d.ty} · ${d.d.split(' ')[0]}</div></div>`).join('');
+  document.getElementById('actLog').innerHTML=LOG.map(l=>`<div style="display:flex;gap:.85rem;padding:.42rem 0;border-bottom:1px solid var(--border);font-size:.68rem"><div style="color:var(--chm);min-width:72px">${l.dt}</div><div style="color:var(--gold);font-weight:600;min-width:110px">${l.u}</div><div style="flex:1;color:var(--charcoal)">${l.a}</div></div>`).join('');
+}
+function buildCharts(){
+  const c1=document.getElementById('cRev');
+  if(c1&&!c1.ok){c1.ok=1;new Chart(c1,{type:'bar',data:{labels:['Jan','Fév','Mar','Avr','Mai','Juin'],datasets:[{label:'TND',data:[8200,9100,7800,10500,11200,14200],backgroundColor:'rgba(197,160,89,0.85)',borderColor:'rgba(197,160,89,1)',borderWidth:1}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:9}}},x:{ticks:{font:{size:9}}}},responsive:true,maintainAspectRatio:false}});}
+  const c2=document.getElementById('cDom');
+  if(c2&&!c2.ok){c2.ok=1;new Chart(c2,{type:'doughnut',data:{labels:['Civil','Pénal','Commercial','Famille','Admin'],datasets:[{data:[6,3,5,3,1],backgroundColor:['#0A2540','#C5A059','#2D7A4F','#1a6b9e','#C5840A']}]},options:{plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}},responsive:true,maintainAspectRatio:false}});}
+}
+
+// ═══ DOSSIERS ═══
+function renderDoss(data){
+  const el=document.getElementById('dossB');if(!el)return;
+  el.innerHTML=data.map(d=>`<tr><td><span style="font-size:.66rem;font-family:monospace;color:var(--gold);font-weight:700">${d.r}</span></td><td><div class="tbb">${d.ti}</div></td><td><div style="font-size:.7rem">${d.cl}</div></td><td><span class="bdg bdn">${d.ty}</span></td><td>${sbdg(d.st)}</td><td><div style="font-size:.68rem">${d.av}</div></td><td><div class="tbm">${d.ec}</div></td><td>${pbdg(d.pr)}</td><td><div style="display:flex;gap:.22rem"><button class="btn bic" onclick="showT('Dossier ${d.r}','info')">👁</button><button class="btn bic" onclick="showT('Édition dossier','info')">✏️</button></div></td></tr>`).join('');
+}
+function filtD(v){renderDoss(v?DOS.filter(d=>d.ti.toLowerCase().includes(v.toLowerCase())||d.r.toLowerCase().includes(v.toLowerCase())||d.cl.toLowerCase().includes(v.toLowerCase())):DOS);}
+function filtDS(v){renderDoss(v?DOS.filter(d=>d.st===v):DOS);}
+
+// ═══ CLIENTS ═══
+function clCard(c){return`<div class="card" style="cursor:pointer" onclick="showT('Fiche: ${c.n}','info')"><div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem"><div style="width:38px;height:38px;border-radius:50%;background:${c.vip?'var(--gold)':'var(--navy)'};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0">${c.n.charAt(0)}</div><div><div style="font-weight:700;font-size:.76rem;color:var(--navy)">${c.n}</div><div style="font-size:.6rem;color:var(--chm)">${c.t}${c.vip?' · ⭐ VIP':''}</div></div></div><div style="font-size:.66rem;color:var(--chm);margin-bottom:.25rem">📍 ${c.v}, ${c.p}</div><div style="font-size:.66rem;color:var(--chm);margin-bottom:.25rem">📞 ${c.tel}</div><div style="display:flex;justify-content:space-between;margin-top:.62rem;padding-top:.62rem;border-top:1px solid var(--border)"><span style="font-size:.63rem;color:var(--chm)">${c.d} dossier${c.d>1?'s':''}</span><span class="bdg bds">Actif</span></div></div>`;}
+function renderCl(){
+  document.getElementById('cGrid').innerHTML=CL.map(clCard).join('');
+  document.getElementById('cGridTn').innerHTML=CL.filter(c=>c.p==='Tunisie').map(clCard).join('');
+  document.getElementById('cGridEtr').innerHTML=CL.filter(c=>c.p!=='Tunisie').map(clCard).join('');
+  document.getElementById('cGridVip').innerHTML=CL.filter(c=>c.vip).map(clCard).join('');
+}
+
+// ═══ KANBAN ═══
+function renderKan(){
+  const KD={'Nouvelle Demande':[{ti:'Consultation — S. Dridi',s:'Pénal · Urgent',c:'#9B2335'},{ti:'Demande — H. Fenniche',s:'Famille',c:'#C5A059'}],'En Attente':[{ti:'Vidéo — K. Gharbi',s:'28 juin · 10:00',c:'#1a6b9e'},{ti:'Écrite — N. Belhaj',s:'Droit Civil',c:'#0A2540'}],'Confirmée':[{ti:'RDV — A. Mansouri',s:'20 juin · 09:00',c:'#2D7A4F'},{ti:'Vidéo — T. Ben Romdhane',s:'25 juin · 14:00',c:'#C5A059'},{ti:'Écrite — F. Khelil',s:'Succession',c:'#0A2540'}],'Terminée':[{ti:'Consultation — H. Slama',s:'18 juin · Clôturée',c:'#888'},{ti:'RDV — S. Boujneh',s:'15 juin · Clôturée',c:'#888'}]};
+  const el=document.getElementById('kanB');if(!el)return;
+  el.innerHTML=Object.entries(KD).map(([col,cards])=>`<div class="kc"><div class="kc-h"><div class="kc-t">${col}</div><div class="kc-n">${cards.length}</div></div>${cards.map(c=>`<div class="kk" style="border-left-color:${c.c}" onclick="showT('${c.ti}','info')"><div class="kk-t">${c.ti}</div><div class="kk-s">${c.s}</div></div>`).join('')}</div>`).join('');
+  const ctx=document.getElementById('cCon');
+  if(ctx&&!ctx.ok){ctx.ok=1;new Chart(ctx,{type:'doughnut',data:{labels:['Vidéo','Écrite','Cabinet'],datasets:[{data:[3,3,2],backgroundColor:['#0A2540','#C5A059','#2D7A4F']}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10}}},responsive:true,maintainAspectRatio:false}});}
+}
+
+// ═══ CALENDAR ═══
+function renderCal(){
+  const g=document.getElementById('calG');if(!g)return;
+  const days=[];
+  for(let i=27;i<=31;i++)days.push({d:i,cur:false});
+  for(let i=1;i<=30;i++)days.push({d:i,cur:true});
+  for(let i=1;i<=5;i++)days.push({d:i,cur:false});
+  const em={};EVT.forEach(e=>{if(!em[e.j])em[e.j]=[];em[e.j].push(e);});
+  g.innerHTML=days.map(day=>{
+    const isT=day.cur&&day.d===20,evs=(day.cur&&em[day.d])||[];
+    return`<div class="cal-c ${!day.cur?'om':''} ${isT?'tdy':''}" onclick="showT('${day.d} juin 2026','info')"><div class="cal-n">${day.d}</div>${evs.slice(0,2).map(e=>`<div class="cal-e ${e.ty==='au'?'au':e.ty==='vi'?'vi':e.ty==='re'?'re':''}">${e.h!=='—'?e.h+' ':' '}${e.ti.substring(0,12)}</div>`).join('')}${evs.length>2?`<div style="font-size:.5rem;color:var(--chm)">+${evs.length-2}</div>`:''}</div>`;
+  }).join('');
+  const ue=document.getElementById('upEv');
+  if(ue)ue.innerHTML=EVT.filter(e=>e.j>=20).slice(0,5).map(e=>`<div style="display:flex;gap:.85rem;padding:.52rem 0;border-bottom:1px solid var(--border);align-items:center"><div style="width:34px;height:34px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0"><div style="font-size:.78rem;font-weight:700;color:var(--gold)">${e.j}</div><div style="font-size:.48rem;color:rgba(255,255,255,0.45)">JUIN</div></div><div style="flex:1"><div style="font-size:.73rem;font-weight:600;color:var(--navy)">${e.ti}</div><div style="font-size:.63rem;color:var(--chm)">${e.h}</div></div><span class="bdg ${e.ty==='au'?'bdd':e.ty==='vi'?'bdi':'bdn'}">${e.ty==='au'?'Audience':e.ty==='vi'?'Vidéo':'RDV'}</span></div>`).join('');
+}
+
+// ═══ EQUIPE ═══
+function renderEq(){
+  const el=document.getElementById('eqG');if(!el)return;
+  el.innerHTML=EQ.map(m=>`<div class="card"><div style="display:flex;gap:.75rem;margin-bottom:.85rem;align-items:flex-start"><div style="width:44px;height:44px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:.83rem;flex-shrink:0;border:2px solid var(--borderg)">${m.i}</div><div style="flex:1"><div style="font-weight:700;font-size:.76rem;color:var(--navy)">${m.n}</div><div style="font-size:.63rem;color:var(--chm)">${m.ti}</div><span class="bdg bdn" style="margin-top:.22rem">${m.r}</span></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:.35rem;font-size:.63rem;color:var(--chm);margin-bottom:.72rem"><div>📁 ${m.d} dossiers</div><div style="color:${m.st==='Actif'?'var(--success)':'var(--warning)'}">${m.st}</div><div>⏰ ${m.co}</div></div><div style="display:flex;gap:.32rem"><button class="btn bsm bo" onclick="showT('Profil: ${m.n}','info')">Profil</button><button class="btn bsm bo" onclick="showT('Permissions: ${m.n}','info')">Permissions</button></div></div>`).join('');
+  const pb=document.getElementById('pmB');if(!pb)return;
+  pb.innerHTML=PERM.map(row=>`<tr><td>${row.m}</td>${row.p.map(p=>`<td>${p?'<span class="pck">✓</span>':'<span class="pcx">✗</span>'}</td>`).join('')}</tr>`).join('');
+}
+
+// ═══ FACTURATION ═══
+function renderFac(){
+  const el=document.getElementById('facB');if(!el)return;
+  el.innerHTML=FAC.map(f=>`<tr><td><span style="font-size:.65rem;font-family:monospace;color:var(--gold);font-weight:700">${f.n}</span></td><td><div class="tbb">${f.cl}</div></td><td><div class="tbm">${f.d}</div></td><td><div style="font-weight:700;color:var(--navy)">${f.m} TND</div></td><td><div class="tbm">${f.e}</div></td><td><div class="tbm">${f.ec}</div></td><td>${fbdg(f.st)}</td><td><div style="display:flex;gap:.22rem"><button class="btn bic" onclick="showT('Facture ${f.n}','info')">👁</button><button class="btn bic" onclick="showT('Téléchargement PDF','ts')">⬇</button>${f.st==='Émise'||f.st==='En retard'?'<button class="btn bsm bs2" onclick="showT(\'Marqué payée\',\'ts\')">Payée</button>':''}</div></td></tr>`).join('');
+}
+
+// ═══ DOCUMENTS ═══
+function renderDocs(){
+  const fol=[{n:'DOS-2026-0042 — Mansouri',c:4},{n:'DOS-2026-0041 — Chaouachi',c:2},{n:'DOS-2026-0040 — Bâtisseurs',c:6},{n:'DOS-2026-0039 — Gharbi',c:3},{n:'Modèles & Templates',c:8},{n:'Correspondances',c:12}];
+  const dt=document.getElementById('docTr');if(dt)dt.innerHTML=fol.map(f=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.48rem .62rem;cursor:pointer;transition:background .15s" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''" onclick="showT('Dossier: ${f.n}','info')"><span style="font-size:.7rem;color:var(--navy)">📁 ${f.n}</span><span class="bdg bdn">${f.c}</span></div>`).join('');
+  const docs=[{n:'Requête principale — Mansouri.pdf',c:'Requêtes',d:'18/06',s:'245 Ko'},{n:'Jugement 1ère inst. Gharbi.pdf',c:'Jugements',d:'15/06',s:'1.2 Mo'},{n:'Contrat bail Bâtisseurs.docx',c:'Contrats',d:'10/06',s:'180 Ko'},{n:"Courrier Cour d'appel.pdf",c:'Correspondances',d:'08/06',s:'95 Ko'},{n:'Acte naissance Chaouachi.pdf',c:'Pièces',d:'05/06',s:'310 Ko'}];
+  const dl=document.getElementById('docLi');if(dl)dl.innerHTML=docs.map(d=>`<div style="display:flex;align-items:center;gap:.62rem;padding:.52rem 0;border-bottom:1px solid var(--border)"><span style="font-size:.95rem">📄</span><div style="flex:1"><div style="font-size:.7rem;font-weight:600;color:var(--navy)">${d.n}</div><div style="font-size:.6rem;color:var(--chm)">${d.c} · ${d.d} · ${d.s}</div></div><button class="btn bic" onclick="showT('Téléchargement','ts')">⬇</button></div>`).join('');
+}
+
+// ═══ DEMANDES ═══
+function renderDem(){
+  const el=document.getElementById('demB');if(!el)return;
+  el.innerHTML=DEM.map(d=>`<tr><td><div class="tbm">${d.d}</div></td><td><div class="tbb">${d.n}</div></td><td><div style="font-size:.68rem">${d.c}</div></td><td><span class="bdg bdn">${d.ty}</span></td><td><div style="font-size:.68rem;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.m}</div></td><td><span class="bdg ${d.st==='Nouvelle'?'bdd':d.st==='En traitement'?'bdw':'bds'}">${d.st}</span></td><td><div style="display:flex;gap:.25rem"><button class="btn bsm bg2" onclick="showT('Réponse à ${d.n}','info')">Répondre</button><button class="btn bsm bo" onclick="showT('Converti en dossier','ts')">→ Dossier</button></div></td></tr>`).join('');
+}
+
+// ═══ BLOG ═══
+function renderBlog(){
+  const el=document.getElementById('blogG');if(!el)return;
+  el.innerHTML=ART.map(a=>`<div class="card"><div style="height:80px;background:linear-gradient(135deg,var(--navy-dark),var(--navy-mid));display:flex;align-items:center;justify-content:center;margin:-1.15rem -1.15rem .85rem;font-size:1.85rem">✍️</div><div style="display:flex;justify-content:space-between;margin-bottom:.42rem"><span class="bdg bdn">${a.ca}</span><span class="bdg ${a.st==='Publié'?'bds':'bdw'}">${a.st}</span></div><div style="font-weight:700;font-size:.76rem;color:var(--navy);margin-bottom:.42rem;line-height:1.4">${a.ti}</div><div style="font-size:.62rem;color:var(--chm);margin-bottom:.72rem">${a.d}${a.v?` · ${a.v.toLocaleString()} vues`:''}</div><div style="display:flex;gap:.32rem"><button class="btn bsm bo" onclick="showT('Édition article','info')">✏️ Éditer</button><button class="btn bsm ${a.st==='Publié'?'bd2':'bs2'}" onclick="showT('Statut mis à jour','ts')">${a.st==='Publié'?'Dépublier':'Publier'}</button></div></div>`).join('');
+}
+
+// ═══ SEO ═══
+function renderSEO(){
+  const el=document.getElementById('seoP');if(!el)return;
+  el.innerHTML=SEO.map(p=>{const sc=p.sc>=80?'var(--success)':p.sc>=65?'var(--warning)':'var(--danger)';return`<div class="card" style="margin-bottom:.85rem"><div class="ch"><div><div class="ct">${p.p}</div><span class="bdg ${p.st==='Indexée'?'bds':'bdw'}">${p.st}</span></div><div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:1.65rem;color:${sc};font-weight:700;line-height:1">${p.sc}</div><div style="font-size:.56rem;color:var(--chm)">/100</div></div></div><div class="pb" style="margin-bottom:.85rem"><div class="pf" style="width:${p.sc}%;background:${sc}"></div></div><div class="fr"><div class="fg"><label>Meta Title</label><input type="text" value="${p.mt}"></div><div class="fg"><label>Meta Description</label><input type="text" value="${p.md}"></div></div><div style="display:flex;justify-content:flex-end;gap:.32rem;margin-top:.42rem"><button class="btn bsm bo" onclick="showT('Analyse SEO: ${p.p}','info')">📊 Analyser</button><button class="btn bsm bg2" onclick="showT('SEO mis à jour','ts')">💾 Sauver</button></div></div>`;}).join('');
+}
+
+// ═══ SECURITE ═══
+function renderSec(){
+  const at=document.getElementById('actTb');if(at)at.innerHTML=LOG.map(l=>`<tr><td><div class="tbm">${l.dt}</div></td><td><div style="font-size:.68rem;color:var(--gold);font-weight:600">${l.u}</div></td><td><div style="font-size:.68rem">${l.a}</div></td><td><div class="tbm">${l.ip}</div></td></tr>`).join('');
+  const ct=document.getElementById('conTb');if(ct)ct.innerHTML=CONN.map(l=>`<tr><td><div class="tbm">${l.d}</div></td><td><div style="font-size:.7rem;font-weight:600">${l.u}</div></td><td><div class="tbm">${l.ip}</div></td><td>${l.st==='Succès'?'<span class="bdg bds">Succès</span>':'<span class="bdg bdd">Échec</span>'}</td></tr>`).join('');
+}
+
+// ═══ ANALYTICS CHARTS ═══
+function initAnCharts(){
+  const c1=document.getElementById('cAnR');
+  if(c1&&!c1.ok){c1.ok=1;new Chart(c1,{type:'line',data:{labels:['Jan','Fév','Mar','Avr','Mai','Juin'],datasets:[{label:'TND',data:[8200,9100,7800,10500,11200,14200],borderColor:'#C5A059',backgroundColor:'rgba(197,160,89,0.1)',tension:.4,fill:true,borderWidth:2,pointBackgroundColor:'#C5A059'}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:9}}},x:{ticks:{font:{size:9}}}},responsive:true,maintainAspectRatio:false}});}
+  const c2=document.getElementById('cOri');
+  if(c2&&!c2.ok){c2.ok=1;new Chart(c2,{type:'doughnut',data:{labels:['Tunisie','France','Italie','Allemagne'],datasets:[{data:[8,2,1,1],backgroundColor:['#0A2540','#C5A059','#2D7A4F','#1a6b9e']}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10}}},responsive:true,maintainAspectRatio:false}});}
+  const c3=document.getElementById('cDomA');
+  if(c3&&!c3.ok){c3.ok=1;new Chart(c3,{type:'bar',data:{labels:['Civil','Pénal','Comm.','Famille','Admin'],datasets:[{data:[6,3,5,3,1],backgroundColor:'rgba(10,37,64,0.82)'}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:8}}},x:{ticks:{font:{size:8}}}},responsive:true,maintainAspectRatio:false}});}
+  const c4=document.getElementById('cSrc');
+  if(c4&&!c4.ok){c4.ok=1;new Chart(c4,{type:'doughnut',data:{labels:['Google','Direct','Bouche à oreille','Réseaux'],datasets:[{data:[45,25,20,10],backgroundColor:['#0A2540','#C5A059','#2D7A4F','#1a6b9e']}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10}}},responsive:true,maintainAspectRatio:false}});}
+  const tp=document.getElementById('topP');
+  if(tp){const pages=[{p:'Accueil',v:2104,pct:100},{p:'Expertises',v:987,pct:47},{p:'Contact',v:743,pct:35},{p:'Bibliothèque',v:612,pct:29},{p:'Profil',v:445,pct:21}];tp.innerHTML=pages.map(p=>`<div style="margin-bottom:.55rem"><div style="display:flex;justify-content:space-between;font-size:.68rem;margin-bottom:.16rem"><span style="color:var(--navy);font-weight:500">${p.p}</span><span style="color:var(--chm)">${p.v.toLocaleString()}</span></div><div class="pb"><div class="pf" style="width:${p.pct}%"></div></div></div>`).join('');}
+}
+
+// ═══ ESPACE CLIENT ═══
+function loadPortal(id){
+  const v=document.getElementById('portalV');
+  if(!id){v.innerHTML='<div class="al ali">ℹ️ Sélectionnez un client ci-dessus.</div>';return;}
+  const c=CL.find(x=>x.id===id),d=DOS.filter(x=>x.cl===c.n),f=FAC.filter(x=>x.cl===c.n);
+  v.innerHTML=`<div style="border:2.5px solid var(--gold);background:#fff"><div style="background:var(--navy);padding:.62rem 1.05rem;display:flex;align-items:center;justify-content:space-between"><div style="color:#fff;font-size:.76rem;font-weight:700">🖥 Simulation — Espace Client : ${c.n}</div><span class="bdg bdg2">Vue Admin</span></div><div style="padding:1.2rem"><div class="g3" style="margin-bottom:1.05rem"><div class="kpi kn"><div class="kl">Dossiers</div><div class="kv">${d.length}</div></div><div class="kpi kg"><div class="kl">Factures</div><div class="kv">${f.length}</div></div><div class="kpi ks"><div class="kl">Statut</div><div class="kv" style="font-size:1rem">Actif</div></div></div><div class="g2"><div class="card"><div class="ct" style="margin-bottom:.72rem">Mes Dossiers</div>${d.map(dd=>`<div style="padding:.42rem 0;border-bottom:1px solid var(--border)"><div style="font-size:.68rem;font-weight:700;color:var(--gold)">${dd.r}</div><div style="font-size:.66rem;color:var(--charcoal);margin:.08rem 0">${dd.ti}</div>${sbdg(dd.st)}</div>`).join('')}</div><div class="card"><div class="ct" style="margin-bottom:.72rem">Mes Factures</div>${f.map(ff=>`<div style="padding:.42rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.66rem;font-weight:600">${ff.n}</div><div class="tbm">${ff.e}</div></div><div style="text-align:right"><div style="font-weight:700;font-size:.76rem;color:var(--navy)">${ff.m} TND</div>${fbdg(ff.st)}</div></div>`).join('')}</div></div><div class="card" style="margin-top:.85rem"><div class="ct" style="margin-bottom:.62rem">✉️ Messagerie Client</div><textarea placeholder="Envoyer un message au client..." style="margin-bottom:.42rem"></textarea><button class="btn bg2 bsm" onclick="showT('Message envoyé à ${c.n}','ts')">Envoyer</button></div></div></div>`;
+}
+
+// ═══ CMS TABS ═══
+function cmsT(el,id){
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.css').forEach(s=>s.style.display='none');
+  const s=document.getElementById(id);if(s)s.style.display='block';
+}
+function buildCms(){
+  const fe=document.getElementById('faqEd');
+  if(fe)fe.innerHTML=FAQS.map((f,i)=>`<div style="border:1px solid var(--border);margin-bottom:.6rem;padding:.82rem"><div style="display:flex;justify-content:space-between;margin-bottom:.42rem"><label>FAQ ${i+1}</label><button class="btn bsm bd2" onclick="showT('FAQ supprimée','info')">Suppr.</button></div><div class="fg"><label>Question (AR)</label><input type="text" value="${f.q}"></div><div class="fg"><label>Réponse (AR)</label><textarea style="min-height:50px">${f.a}</textarea></div></div>`).join('');
+  const te=document.getElementById('tmEd');
+  if(te)te.innerHTML=EQ.map((m,i)=>`<div style="display:flex;gap:.85rem;padding:.72rem;border-bottom:1px solid var(--border);align-items:center"><div style="width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;flex-shrink:0">${m.i}</div><div style="flex:1"><div style="font-size:.73rem;font-weight:600;color:var(--navy)">${m.n}</div><div style="font-size:.63rem;color:var(--chm)">${m.ti}</div></div><label style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;cursor:pointer"><input type="checkbox" ${i<4?'checked':''} onchange="showT('Visibilité mise à jour','ts')"> Visible</label><button class="btn bsm bo" onclick="showT('Photo mise à jour','ts')">📸</button></div>`).join('');
+}
+
+// ═══ SEARCH ═══
+function doSearch(v){
+  const box=document.getElementById('srBox');
+  if(!v.trim()){box.style.display='none';return;}
+  const q=v.toLowerCase();
+  const R=[
+    ...CL.filter(c=>c.n.toLowerCase().includes(q)).map(c=>({ti:'👥 '+c.n,s:'Client · '+c.t,v:'clients'})),
+    ...DOS.filter(d=>d.r.toLowerCase().includes(q)||d.ti.toLowerCase().includes(q)).map(d=>({ti:'📁 '+d.r,s:d.ti,v:'dossiers'})),
+    ...FAC.filter(f=>f.n.toLowerCase().includes(q)||f.cl.toLowerCase().includes(q)).map(f=>({ti:'💰 '+f.n,s:f.cl+' · '+f.st,v:'facturation'})),
+    ...ART.filter(a=>a.ti.toLowerCase().includes(q)).map(a=>({ti:'✍️ '+a.ti,s:'Article · '+a.st,v:'blog'})),
+  ].slice(0,7);
+  if(!R.length){box.style.display='none';return;}
+  box.innerHTML=R.map(r=>`<div class="sr-it" onclick="sv('${r.v}');closeSr()"><div class="sr-t">${r.ti}</div><div class="sr-s">${r.s}</div></div>`).join('');
+  box.style.display='block';
+}
+function closeSr(){const b=document.getElementById('srBox');if(b)b.style.display='none';}
+
+// ═══ TABS GENERIC ═══
+function stab(el,id){
+  const p=el.closest('.view')||document;
+  p.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['tc-all','tc-tn','tc-etr','tc-vip'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display='none';});
+  const t=document.getElementById(id);if(t)t.style.display='block';
+}
+
+// ═══ CLOSE ON OUTSIDE CLICK ═══
+document.addEventListener('click',e=>{
+  const np=document.getElementById('np');
+  if(!np.contains(e.target)&&!e.target.closest('.tb-btn'))np.classList.remove('open');
+});
+</script>
+</body>
+</html>
